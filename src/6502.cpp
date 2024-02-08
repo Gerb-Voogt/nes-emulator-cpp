@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <stdexcept>
 #include <vector>
 #include <iostream>
 
@@ -26,6 +27,20 @@ void CPU::memory_write(const uint16_t addr, const uint8_t data) {
 }
 
 void CPU::load_program(const std::vector<uint8_t> program) {
+	// The memory space of the ROM on the NES is from 0x8000 to 0xFFFF
+	// Throw an error if the program does not fit into memory
+	if (program.size() > UINT16_MAX/2) {
+		throw std::out_of_range("Program does not fit into memory...");
+	}
+	if (program.size() == 0) {
+		throw std::out_of_range("Program does not contain any instructions...");
+	}
+
+	const uint16_t program_length = program.size(); 
+	for (int i = 0; i < program_length; i++) {
+		this->memory[0x8000+i] = program[i]; // load the program into memory
+	}
+	this->program_counter = 0x8000; // Set the program counter to the first instruction
 }
 
 
@@ -83,4 +98,19 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 		this->status = this->status & 0b10111111;
 	}
 
+}
+
+// Debug Functions
+// This function should be changed such that it prints out a more readable
+// table format rather than dumping all the text to the screen like it does not
+void CPU::print_memory_content() {
+	// Print out the reserved memory space
+	std::cout << "Address 0x0000 - 0x8000" << std::endl;
+	for (int i = 0; i < 0x8000; i++) {
+		std::cout << unsigned(this->memory[i]) << std::endl;
+	}
+	std::cout << std::endl << "Address 0x8000 - 0xFFFF" << std::endl;
+	for (int i = 0x8000+1; i < 0xFFFF; i++) {
+		std::cout << unsigned(this->memory[i]) << std::endl;
+	}
 }

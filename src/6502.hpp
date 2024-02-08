@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <vector>
 
@@ -50,4 +51,6 @@ public:
 	void inx();
 
 	void update_zero_and_negative_flags(const uint8_t reg);
+
+	void print_memory_content();
 };
