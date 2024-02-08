@@ -1,3 +1,4 @@
+#pragma once
 // Functions for unit testing
 
 // Instructions

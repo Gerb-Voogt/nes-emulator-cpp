@@ -2,7 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
-#include "../src/6502.hpp"
+#include "6502.hpp"
 
 void test_lda_immediate_load_state() {
 	CPU cpu = CPU();
