@@ -10,9 +10,9 @@ enum AddressingMode {
 	Absolute,
 	AbsoluteX,
 	AbsoluteY,
+	Indirect,
 	IndirectX,
 	IndirectY,
-	NoneAdressing
 };
 
 class CPU {

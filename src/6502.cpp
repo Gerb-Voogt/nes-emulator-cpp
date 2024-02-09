@@ -169,10 +169,56 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			return this->program_counter;
 		}
 		case AddressingMode::ZeroPage: {
-			return this->memory_read(this->program_counter);
+			return (uint16_t)memory_read(this->program_counter);
 		}
-		default: {
-			throw std::exception(std::format())
+		// C++ does wrapping addition by default on uint8 and uint16 types
+		case AddressingMode::ZeroPageX: {
+			const uint8_t pos = this->memory_read(this->program_counter);
+			const uint16_t addr = (uint16_t)(pos + register_irx); 
+			return addr;
+		}
+		case AddressingMode::ZeroPageY: {
+			const uint8_t pos = this->memory_read(this->program_counter);
+			const uint16_t addr = (uint16_t)(pos + register_iry);
+			return addr;
+		}
+		case AddressingMode::Absolute: {
+			return this->memory_read_uint16(this->program_counter); // Read the address
+		}
+		case AddressingMode::AbsoluteX: {
+			uint16_t base = this->memory_read_uint16(this->program_counter);
+			uint16_t addr = base + this->register_irx;
+			return addr;
+		}
+		case AddressingMode::AbsoluteY: {
+			uint16_t base = this->memory_read_uint16(this->program_counter);
+			uint16_t addr = base + this->register_iry;
+			return addr;
+		}
+		case AddressingMode::Indirect: {
+			uint16_t ptr = this->memory_read_uint16(this->program_counter); // Read the address
+			return this->memory_read_uint16(ptr); // read the data at the ptr location
+		}
+		case AddressingMode::IndirectX: {
+			uint8_t base = this->memory_read(this->program_counter);
+			uint8_t ptr = base + this->register_irx;
+
+			uint16_t lo_byte = this->memory_read(ptr);
+			uint16_t hi_byte = this->memory_read(ptr+1);
+
+			return (hi_byte << 8) | lo_byte;
+		}
+		case AddressingMode::IndirectY: {
+			uint8_t base = this->memory_read(this->program_counter);
+			uint8_t ptr = base + this->register_iry;
+
+			uint16_t lo_byte = this->memory_read(ptr);
+			uint16_t hi_byte = this->memory_read(ptr+1);
+
+			return (hi_byte << 8) | lo_byte;
+		}
+		default: { // Throw an error if the AddressingMode is not in the list
+			throw std::runtime_error("Enum element not found");
 		}
 	}
 
