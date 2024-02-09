@@ -32,10 +32,19 @@ public:
 	//@param uint16_t addr, the address to read
 	uint8_t memory_read(const uint16_t addr) const;
 
+	//@description Read 2 bytes of memory from address. Apply conversion as the NES CPU uses little endian addressing
+	//@param uint16_t addr, the address to read
+	uint16_t memory_read_uint16(const uint16_t addr) const;
+
 	//@description Write memory to address
 	//@param uint16_t addr, the address to write
 	//@param uint8_t data, the data to write to the address
 	void memory_write(const uint16_t addr, const uint8_t data);
+
+	//@description Write 2 bytes of memory to the address. Apply conversion as the NES CPU uses little endian addressing
+	//@param uint16_t addr, the address to write
+	//@param uint16_t data, the data to write to the address
+	void memory_write_uint16(const uint16_t addr, const uint16_t data);
 
 	//@description load a program into memory space
 	//@param std::vec<uint8_t> program, vector containing the program instructions
@@ -45,6 +54,11 @@ public:
 	//@param uint16_t addr, the address to write
 	//@param std::vec<uint8_t> program, vector containing the program instructions
 	void load_program_and_run(const std::vector<uint8_t> program);
+
+	//@description Special subroutine that gets called when a cartridge is inserted
+	// resets the state (registers and flags all get set to 0) and sets the program counter
+	// to the address 0xFFFC
+	void reset();
 	
 	//@description Interpret a program (sequence of instructions). Cycle consists of fetching an instruction from the PC address, decoding this
 	// instruction and executing this instruction, and repeat. Mainly useful as a debugging interface and for unit testing

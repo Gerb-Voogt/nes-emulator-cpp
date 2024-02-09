@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <exception>
 #include <stdexcept>
 #include <vector>
 #include <iostream>
@@ -37,6 +38,16 @@ void CPU::memory_write(const uint16_t addr, const uint8_t data) {
 	this->memory[addr] = data;
 }
 
+void CPU::memory_write_uint16(const uint16_t addr, const uint16_t data) {
+	uint8_t hi_byte = (data << 8); // left shift by 8 to get the upper half of data into uint8_t
+	uint8_t lo_byte = (data & 0b111111); // bitwise & with 255 in order to extract the lower half of data
+
+	// lo byte (lower half byte of data) should be written to addr
+	// hi byte (upper half byte of data) should be written to addr + 1
+	this->memory_write(addr, lo_byte);
+	this->memory_write(addr+1, hi_byte);
+}
+
 void CPU::load_program(const std::vector<uint8_t> program) {
 	// The memory space of the ROM on the NES is from 0x8000 to 0xFFFF
 	// Throw an error if the program does not fit into memory
@@ -48,9 +59,10 @@ void CPU::load_program(const std::vector<uint8_t> program) {
 	}
 
 	const uint16_t program_length = program.size(); 
-	for (int i = 0; i < program_length; i++) {
+	for (int i = 0; i <= program_length; i++) {
 		this->memory[0x8000+i] = program[i]; // load the program into memory
 	}
+	this->memory_write_uint16(0xFFFC, 0x8000);
 	this->program_counter = 0x8000; // Set the program counter to the first instruction
 }
 
