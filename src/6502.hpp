@@ -2,6 +2,19 @@
 #include <cstdint>
 #include <vector>
 
+enum AddressingMode {
+	Immediate,
+	ZeroPage,
+	ZeroPageX,
+	ZeroPageY,
+	Absolute,
+	AbsoluteX,
+	AbsoluteY,
+	IndirectX,
+	IndirectY,
+	NoneAdressing
+};
+
 class CPU {
 public:
 	uint16_t program_counter;
