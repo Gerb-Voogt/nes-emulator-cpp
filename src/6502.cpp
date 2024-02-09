@@ -64,35 +64,62 @@ void CPU::reset() {
 	this->program_counter = this->memory_read_uint16(0xFFFC);
 }
 
+
 int CPU::interpret(std::vector<uint8_t> program) {
 	while (true) {
 		uint8_t opcode = program[this->program_counter]; // Fetch the instruction
 		this->program_counter += 1;
 
 		switch (opcode) {
+			// brk instruction
 			case 0x00: {
 				return 0;
 			}
-			case 0xA9: { // lda immediate
-				uint8_t param = program[program_counter];
+			// nop instruction
+			case 0xEA: {
+				this->nop();
+			}
+
+			// lda instructions
+			case 0xA9: { // immediate
+				this->lda(AddressingMode::Immediate);
 				this->program_counter += 1;
-				this->lda(param);
-				break;
 			}
-			case 0xAA: { // tax
+			case 0xA5: { // Zero Page
+				this->lda(AddressingMode::ZeroPage);
+				this->program_counter += 1;
+			}
+			case 0xAD: { // Absolute
+				this->lda(AddressingMode::Absolute);
+				this->program_counter += 2;
+			}
+			// tax
+			case 0xAA: {  // implied
 				this->tax();
-				break;
 			}
-			case 0xE9: { // inx
+			// inx
+			case 0xE9: { // implied
 				this->inx();
-				break;
+			}
+			// iny
+			case 0xC8: { // implied
+				this->iny();
 			}
 		}
 	}
 }
 
-void CPU::lda(const uint8_t param) {
-	this->register_a = param;
+void CPU::run() {
+	// Unimplemented
+}
+
+void CPU::nop() { }
+
+void CPU::lda(const AddressingMode mode) {
+	const uint8_t operand_address = get_operand_address(mode);
+	const uint8_t operand = this->memory_read(operand_address);
+
+	this->register_a = operand;
 	update_zero_and_negative_flags(this->register_a);
 }
 
@@ -106,6 +133,11 @@ void CPU::inx() {
 	update_zero_and_negative_flags(this->register_irx);
 }
 
+void CPU::iny() {
+	this->register_iry = this->register_iry + 1;
+	update_zero_and_negative_flags(this->register_iry);
+}
+
 void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 	if (reg == 0) {
 		this->status = this->status | 0b00000010; // Set the Z flag
@@ -117,7 +149,22 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 	} else {
 		this->status = this->status & 0b10111111;
 	}
+}
 
+uint16_t CPU::get_operand_address(const AddressingMode mode) {
+	switch(mode) {
+		case AddressingMode::Immediate: {
+			return this->program_counter;
+		}
+		case AddressingMode::ZeroPage: {
+			return this->memory_read(this->program_counter);
+		}
+		default: {
+			throw std::exception(std::format())
+		}
+	}
+
+	return 0;
 }
 
 // Debug Functions
@@ -130,7 +177,7 @@ void CPU::print_memory_content() {
 		std::cout << unsigned(this->memory[i]) << std::endl;
 	}
 	std::cout << std::endl << "Address 0x8000 - 0xFFFF" << std::endl;
-	for (int i = 0x8000+1; i < 0xFFFF; i++) {
+	for (int i = 0x8000; i < 0xFFFF; i++) {
 		std::cout << unsigned(this->memory[i]) << std::endl;
 	}
 }
