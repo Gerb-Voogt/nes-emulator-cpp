@@ -98,9 +98,29 @@ void CPU::execute_instruction(const uint8_t opcode) {
 			this->lda(AddressingMode::ZeroPage);
 			this->program_counter += 1;
 		}
+		case 0xB5: { // Zero Page
+			this->lda(AddressingMode::ZeroPageX);
+			this->program_counter += 1;
+		}
 		case 0xAD: { // Absolute
 			this->lda(AddressingMode::Absolute);
 			this->program_counter += 2;
+		}
+		case 0xBD: { // AbsoluteX
+			this->lda(AddressingMode::AbsoluteX);
+			this->program_counter += 2;
+		}
+		case 0xB9: { // AbsoluteY
+			this->lda(AddressingMode::AbsoluteY);
+			this->program_counter += 2;
+		}
+		case 0xA1: { // Indirect X
+			this->lda(AddressingMode::IndirectX);
+			this->program_counter += 1;
+		}
+		case 0xB1: { // Indirect Y
+			this->lda(AddressingMode::IndirectY);
+			this->program_counter += 1;
 		}
 		// tax
 		case 0xAA: {  // implied
