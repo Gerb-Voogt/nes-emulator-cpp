@@ -55,7 +55,8 @@ public:
 	void run();
 	
 	//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
-	void lda(const uint8_t param);
+	//@param const AddressingMode mode, addressing mode to be used
+	void lda(const AddressingMode mode);
 
 	//@description Transfer Accumulator to X, copies current content of the accumulator into the X register, setting Z and N flags
 	void tax();
@@ -63,7 +64,20 @@ public:
 	//@description Increment X register, adds one to the X register, setting Z and N flags
 	void inx();
 
+	//@description Increment Y register, adds one to the Y register, setting Z and N flags
+	void iny();
+	//
+	//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
+	void nop();
+
+	//@description Update the zero and negative flags 
+	//@param uint8_t reg, the register used to update
 	void update_zero_and_negative_flags(const uint8_t reg);
 
+	//@description Get the address of the operands based on the addressing mode
+	//@param AddressingMode mode, The addressingmode being used (immediate, absolute, etc.)
+	uint16_t get_operand_address(const AddressingMode mode);
+
+	//@description Dump the memory content to stdout for debugging purposes
 	void print_memory_content();
 };
