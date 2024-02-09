@@ -80,57 +80,57 @@ void CPU::reset() {
 	this->program_counter = this->memory_read_uint16(0xFFFC);
 }
 
+void CPU::execute_instruction(const uint8_t opcode) {
+	switch (opcode) {
+		// brk instruction, do nothing, execution should have terminated before this
+		case 0x00: {
+		}
+		// nop instruction
+		case 0xEA: {
+			this->nop();
+		}
+		// lda instructions
+		case 0xA9: { // immediate
+			this->lda(AddressingMode::Immediate);
+			this->program_counter += 1;
+		}
+		case 0xA5: { // Zero Page
+			this->lda(AddressingMode::ZeroPage);
+			this->program_counter += 1;
+		}
+		case 0xAD: { // Absolute
+			this->lda(AddressingMode::Absolute);
+			this->program_counter += 2;
+		}
+		// tax
+		case 0xAA: {  // implied
+			this->tax();
+		}
+		// inx
+		case 0xE9: { // implied
+			this->inx();
+		}
+		// iny
+		case 0xC8: { // implied
+			this->iny();
+		}
+	}
+}
 
 int CPU::interpret(std::vector<uint8_t> program) {
 	while (true) {
 		uint8_t opcode = program[this->program_counter]; // Fetch the instruction
 		this->program_counter += 1;
-
-		switch (opcode) {
-			// brk instruction
-			case 0x00: {
-				return 0;
-			}
-			// nop instruction
-			case 0xEA: {
-				this->nop();
-			}
-
-			// lda instructions
-			case 0xA9: { // immediate
-				this->lda(AddressingMode::Immediate);
-				this->program_counter += 1;
-			}
-			case 0xA5: { // Zero Page
-				this->lda(AddressingMode::ZeroPage);
-				this->program_counter += 1;
-			}
-			case 0xAD: { // Absolute
-				this->lda(AddressingMode::Absolute);
-				this->program_counter += 2;
-			}
-			// tax
-			case 0xAA: {  // implied
-				this->tax();
-			}
-			// inx
-			case 0xE9: { // implied
-				this->inx();
-			}
-			// iny
-			case 0xC8: { // implied
-				this->iny();
-			}
-		}
+		this->execute_instruction(opcode);
 	}
 }
 
 void CPU::run() {
-	// Unimplemented
 	while (true) {
 		uint8_t opcode = this->memory_read(program_counter);
 		this->program_counter += 1;
 		this->execute_instruction(opcode);
+	}
 }
 
 void CPU::nop() { }

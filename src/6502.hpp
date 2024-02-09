@@ -60,6 +60,10 @@ class CPU {
 		// to the address 0xFFFC
 		void reset();
 		
+		//@description execute a specific opcode
+		//@param uint8_t opcode, the opcode corresponding to the instruction to be executed
+		void execute_instruction(const uint8_t opcode);
+
 		//@description Interpret a program (sequence of instructions). Cycle consists of fetching an instruction from the PC address, decoding this
 		// instruction and executing this instruction, and repeat. Mainly useful as a debugging interface and for unit testing
 		//@param std::vector<uint8_t> Program, sequence of instructions
