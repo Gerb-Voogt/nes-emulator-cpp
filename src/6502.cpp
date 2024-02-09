@@ -55,6 +55,15 @@ void CPU::load_program(const std::vector<uint8_t> program) {
 }
 
 
+void CPU::reset() {
+	this->register_a = 0;
+	this->register_irx = 0;
+	this->register_iry = 0;
+	this->status = 0;
+
+	this->program_counter = this->memory_read_uint16(0xFFFC);
+}
+
 int CPU::interpret(std::vector<uint8_t> program) {
 	while (true) {
 		uint8_t opcode = program[this->program_counter]; // Fetch the instruction
