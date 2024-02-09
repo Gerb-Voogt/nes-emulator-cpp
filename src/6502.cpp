@@ -22,6 +22,17 @@ uint8_t CPU::memory_read(const uint16_t addr) const {
 	return this->memory[addr];
 }
 
+uint16_t CPU::memory_read_uint16(const uint16_t addr) const {
+	// 8 bit values read into 16 bit variables such that the left most
+	// byte for both is padded with zeros
+	uint16_t lo_byte = this->memory_read(addr);
+	uint16_t hi_byte = this->memory_read(addr+1);
+
+	// Left shift hi_byte by 8 such that it is the left-most byte sequence
+	// This is to correct for the fact that the 6502 CPU of the NES is little endian
+	return ((hi_byte << 8) | lo_byte);
+}
+
 void CPU::memory_write(const uint16_t addr, const uint8_t data) {
 	this->memory[addr] = data;
 }
