@@ -50,7 +50,7 @@ class CPU {
 		//@param std::vec<uint8_t> program, vector containing the program instructions
 		void load_program(const std::vector<uint8_t> program);
 
-		//@description load a program into memory space and run it
+		//@description load a program into memory space, reset the registeres and run it
 		//@param uint16_t addr, the address to write
 		//@param std::vec<uint8_t> program, vector containing the program instructions
 		void load_program_and_run(const std::vector<uint8_t> program);

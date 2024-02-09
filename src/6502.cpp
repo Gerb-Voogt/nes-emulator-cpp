@@ -1,5 +1,4 @@
 #include <cstdint>
-#include <exception>
 #include <stdexcept>
 #include <vector>
 #include <iostream>
@@ -63,7 +62,12 @@ void CPU::load_program(const std::vector<uint8_t> program) {
 		this->memory[0x8000+i] = program[i]; // load the program into memory
 	}
 	this->memory_write_uint16(0xFFFC, 0x8000);
-	this->program_counter = 0x8000; // Set the program counter to the first instruction
+}
+
+void CPU::load_program_and_run(const std::vector<uint8_t> program) {
+	this->load_program(program);
+	this->reset();
+	this->run();
 }
 
 
@@ -123,6 +127,10 @@ int CPU::interpret(std::vector<uint8_t> program) {
 
 void CPU::run() {
 	// Unimplemented
+	while (true) {
+		uint8_t opcode = this->memory_read(program_counter);
+		this->program_counter += 1;
+		this->execute_instruction(opcode);
 }
 
 void CPU::nop() { }
