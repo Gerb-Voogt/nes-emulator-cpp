@@ -18,6 +18,11 @@ CPU::CPU() {
 	}
 }
 
+CPU::~CPU() {
+	// All values are stack allocated, no deallocation needs to be taken
+	// care off. The values will automatically get resolved once their lifetime ends.
+}
+
 uint8_t CPU::memory_read(const uint16_t addr) const {
 	return this->memory[addr];
 }

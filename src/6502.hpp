@@ -23,10 +23,17 @@ class CPU {
 		uint8_t register_irx;
 		uint8_t register_iry;
 		uint8_t status;
+
+		// This might give a warning for some compilers as a large amount of data 
+		// is allocated on the stack. First 256 bytes (0x0100) reserved as the zero page
+		// Which has faster access times.
 		uint8_t memory[0xFFFF]; // Memory space, [0x8000...0xFFFF] reserved for Program ROM
 
 		//@description default Constructor Initializes all CPU registers to 0
 		CPU();
+	
+		//@description Destructor, clean up the CPU object
+		~CPU();
 
 		//@description Read memory from address
 		//@param uint16_t addr, the address to read
