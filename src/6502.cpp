@@ -1,3 +1,4 @@
+#include <bitset>
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
@@ -259,6 +260,7 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 }
 
 // Debug Functions
+
 // This function should be changed such that it prints out a more readable
 // table format rather than dumping all the text to the screen like it does not
 void CPU::print_memory_content() {
@@ -271,4 +273,8 @@ void CPU::print_memory_content() {
 	for (int i = 0x8000; i < 0xFFFF; i++) {
 		std::cout << unsigned(this->memory[i]) << std::endl;
 	}
+}
+
+const std::bitset<8> as_binary8(const uint8_t val) {
+	return std::bitset<8>(val);
 }
