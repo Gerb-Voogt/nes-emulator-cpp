@@ -36,6 +36,8 @@ enum Mode {
 	Clear,
 	Update,
 };
+
+// CPU class containing CPU state and all OPCODE subroutines
 class CPU {
 	public:
 		uint16_t program_counter;
@@ -100,6 +102,10 @@ class CPU {
 		//@description Run the CPU, executing whatever program is loaded into the memory space
 		void run();
 		
+		//@description Add with Carry, Adds content to accumulator together with the carry bit. Carry bit set if overflow occurs
+		//@param const AddressingMode mode, addressing mode to be used
+		void adc(const AddressingMode mode);
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void lda(const AddressingMode mode);
@@ -116,9 +122,21 @@ class CPU {
 		//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
 		void nop();
 
+		//@description Add an operand to the accumulator, accounting for carryover
+		//@param uint8_t operand, the operand to add to the accumulator
+		void add_to_accumulator_register(const uint8_t operand);
+
 		//@description Update the zero and negative flags 
 		//@param uint8_t reg, the register used to update
 		void update_zero_and_negative_flags(const uint8_t reg);
+
+		//@description Update overflow flag
+		//@param uint8_t reg, the register used to update the status register
+		//@param uint8_t reg, the operand used, used to check if carryover should occur
+		void update_carry_flag(const uint8_t reg, const Mode mode);
+
+		//@description Update overflow flag (???)
+		void update_overflow_flag();
 
 		//@description Get the address of the operands based on the addressing mode
 		//@param AddressingMode mode, The addressingmode being used (immediate, absolute, etc.)
@@ -127,3 +145,6 @@ class CPU {
 		//@description Dump the memory content to stdout for debugging purposes
 		void print_memory_content();
 };
+ 
+// Function for debugging and printing purposes. Prints a uint8_t variable as the bitstring representation
+const std::bitset<8> as_binary8(const uint8_t val);

@@ -159,7 +159,21 @@ void CPU::run() {
 	}
 }
 
-void CPU::nop() { }
+void CPU::nop() { } // Does literally nothing lol
+
+void CPU::adc(const AddressingMode mode) {
+	const uint8_t operand_address = get_operand_address(mode);
+	const uint8_t operand = this->memory_read(operand_address);
+	const uint8_t sum = this->register_a + operand;
+
+	this->register_a += operand;
+	update_carry_flag(this->register_a, operand);
+	update_zero_and_negative_flags(this->register_a);
+
+	// Note that the overflow bit V of the register _should_ also be updated
+	// The NESDEV wiki mentions "set if sign bit is incorrect" but right now I am not really
+	// sure how to go about detecting this
+}
 
 void CPU::lda(const AddressingMode mode) {
 	const uint8_t operand_address = get_operand_address(mode);
@@ -182,6 +196,10 @@ void CPU::inx() {
 void CPU::iny() {
 	this->register_iry = this->register_iry + 1;
 	update_zero_and_negative_flags(this->register_iry);
+}
+
+void CPU::add_to_accumulator_register(const uint8_t operand) {
+	uint16_t sum = (uint16_t)this->register_a + operand;
 }
 
 void CPU::update_carry_flag(const uint8_t reg, const uint8_t operand) {
@@ -226,6 +244,7 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 }
 
 void CPU::update_overflow_flag() { }; // Unimplemented 
+
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
 		case AddressingMode::Immediate: {
