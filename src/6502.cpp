@@ -184,19 +184,48 @@ void CPU::iny() {
 	update_zero_and_negative_flags(this->register_iry);
 }
 
-void CPU::update_zero_and_negative_flags(const uint8_t reg) {
-	if (reg == 0) {
-		this->status = this->status | 0b00000010; // Set the Z flag
-	} else {
-		this->status = this->status & 0b11111101; 
-	}
-	if ((reg & 0b01000000) != 0) {
-		this->status = this->status | 0b01000000; // Set the N flag
-	} else {
-		this->status = this->status & 0b10111111;
+void CPU::update_carry_flag(const uint8_t reg, const uint8_t operand) {
+	if (reg < operand) { // Set the flag if the register content is smaller than the operator, carryover has occured
+		this->status = this->status | Flag::Carry;
+	} else { // Unset the flag
+		this->status = this->status & ~Flag::Carry;
 	}
 }
 
+void CPU::update_carry_flag(const uint8_t reg, const Mode mode) {
+	if (mode == Mode::Set) {
+		this->status = this->status | Flag::Carry;
+	}
+	else if (mode == Mode::Clear) {
+		this->status = this->status & ~Flag::Carry;
+	}
+	else if (mode == Mode::Update) {
+		// Check the current status of the register
+		// if it's 1, unset it, otherwise set it
+		const uint8_t register_status = this->status & Flag::Carry;
+		if (register_status == 0) {
+			this->status = this->status | Flag::Carry;
+		}
+		else if (register_status == 1) {
+			this->status = this->status & ~Flag::Carry;
+		}
+	}
+}
+
+void CPU::update_zero_and_negative_flags(const uint8_t reg) {
+	if (reg == 0) { // Set the flag if the register content is 0
+		this->status = this->status | Flag::Zero; // Set the Z flag
+	} else {
+		this->status = this->status & ~Flag::Zero; 
+	}
+	if ((reg & 0b01000000) != 0) { // Set this flag if the negative bit is set
+		this->status = this->status | Flag::Negative; // Set the N flag
+	} else {
+		this->status = this->status & ~Flag::Negative;
+	}
+}
+
+void CPU::update_overflow_flag() { }; // Unimplemented 
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
 		case AddressingMode::Immediate: {

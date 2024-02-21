@@ -1,7 +1,9 @@
 #pragma once
+#include <bitset>
 #include <cstdint>
 #include <vector>
 
+// Enums for code readability
 enum AddressingMode {
 	Immediate,
 	ZeroPage,
@@ -15,6 +17,25 @@ enum AddressingMode {
 	IndirectY,
 };
 
+enum Flag {
+	Carry = 0b0000001,
+	Zero = 0b00000010,
+	InteruptDisable = 0b00000100,
+	DecimalMode = 0b00001000,
+	Break = 0b00010000,
+	Overflow = 0b01000000,
+	Negative = 0b10000000,
+};
+
+// Mode enum for specifying what to do when updating the status register
+// Set - Set a specific flag
+// Clear - Clear a specific flag
+// Update - Negate a specific flag
+enum Mode {
+	Set,
+	Clear,
+	Update,
+};
 class CPU {
 	public:
 		uint16_t program_counter;
