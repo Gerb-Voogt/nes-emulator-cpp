@@ -200,24 +200,44 @@ void CPU::iny() {
 
 void CPU::add_to_accumulator_register(const uint8_t operand) {
 	uint16_t sum = (uint16_t)this->register_a + operand;
-}
 
-void CPU::update_carry_flag(const uint8_t reg, const uint8_t operand) {
-	if (reg < operand) { // Set the flag if the register content is smaller than the operator, carryover has occured
-		this->status = this->status | Flag::Carry;
-	} else { // Unset the flag
-		this->status = this->status & ~Flag::Carry;
+	if ((this->status & Flag::Carry) != 0) {
+		// add the carry if the flag is set
+		sum += 1;
+		update_carry_flag(Mode::Clear);
 	}
+
+	// Carry if sum is larger then what fits in the 8-bit register
+	if (sum > 0xFF) {
+		update_carry_flag(Mode::Set);
+	}
+
+	const uint8_t result = (uint8_t)sum;
+
+	// Check for overflow
+	// Overflow occurs when adding 2 positive numbers results in a negative number
+	// OR
+	// adding 2 negative number results in a positive number.
+	// This can be checked using
+	//		result XOR operand, MSB = 1 if the result is of oppsite sign of the operand
+	//		result XOR register_a, MSB = 1 if the result is of oppsite sign of the register content
+	// If both of these are true simulataneously, then one of the following 2 situations happened
+	//		Adding a positive number to the register with positive content resulted in a negative number
+	//		Adding a negative number to the register with negative content resulted in a positive number
+	// Implying that overflow has happened
+	if ((result ^ operand) & (result ^ this->register_a) & 0x80) {
+		update_overflow_flag(Mode::Set);
+	}
+
+	this->register_a = result;
 }
 
-void CPU::update_carry_flag(const uint8_t reg, const Mode mode) {
+void CPU::update_carry_flag(const Mode mode) {
 	if (mode == Mode::Set) {
 		this->status = this->status | Flag::Carry;
-	}
-	else if (mode == Mode::Clear) {
+	} else if (mode == Mode::Clear) {
 		this->status = this->status & ~Flag::Carry;
-	}
-	else if (mode == Mode::Update) {
+	} else if (mode == Mode::Update) {
 		// Check the current status of the register
 		// if it's 1, unset it, otherwise set it
 		const uint8_t register_status = this->status & Flag::Carry;
@@ -236,14 +256,20 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 	} else {
 		this->status = this->status & ~Flag::Zero; 
 	}
-	if ((reg & 0b01000000) != 0) { // Set this flag if the negative bit is set
+	if ((reg & Flag::Negative) != 0) { // Set this flag if the negative bit is set
 		this->status = this->status | Flag::Negative; // Set the N flag
 	} else {
 		this->status = this->status & ~Flag::Negative;
 	}
 }
 
-void CPU::update_overflow_flag() { }; // Unimplemented 
+void CPU::update_overflow_flag(const Mode mode) {
+	if (mode == Mode::Set) {
+		this->status = this->status | Flag::Overflow;
+	} else if (mode == Mode::Clear) {
+		this->status = this->status & ~Flag::Overflow;
+	}
+};
 
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
