@@ -205,6 +205,31 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 		// add the carry if the flag is set
 		sum += 1;
 		update_carry_flag(Mode::Clear);
+<<<<<<< HEAD
+=======
+	}
+
+	// Carry if sum is larger then what fits in the 8-bit register
+	if (sum > 0xFF) {
+		update_carry_flag(Mode::Set);
+	}
+
+	const uint8_t result = (uint8_t)sum;
+
+	// Check for overflow
+	// Overflow occurs when adding 2 positive numbers results in a negative number
+	// OR
+	// adding 2 negative number results in a positive number.
+	// This can be checked using
+	//		result XOR operand, MSB = 1 if the result is of oppsite sign of the operand
+	//		result XOR register_a, MSB = 1 if the result is of oppsite sign of the register content
+	// If both of these are true simulataneously, then one of the following 2 situations happened
+	//		Adding a positive number to the register with positive content resulted in a negative number
+	//		Adding a negative number to the register with negative content resulted in a positive number
+	// Implying that overflow has happened
+	if ((result ^ operand) & (result ^ this->register_a) & 0x80) {
+		update_overflow_flag(Mode::Set);
+>>>>>>> a5ad88543c6030b0f30785e0c9ca9ac75f1c13a8
 	}
 
 	// Carry if sum is larger then what fits in the 8-bit register
