@@ -170,9 +170,10 @@ void CPU::ADC(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
-	// Note that the overflow bit V of the register _should_ also be updated
-	// The NESDEV wiki mentions "set if sign bit is incorrect" but right now I am not really
-	// sure how to go about detecting this
+void CPU::AND(const AddressingMode mode) {
+	const uint8_t operand = get_operand_address(mode);
+	this->register_a = this->register_a & operand;
+	update_zero_and_negative_flags(this->register_a);
 }
 
 void CPU::LDA(const AddressingMode mode) {
