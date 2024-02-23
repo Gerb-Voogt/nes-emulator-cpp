@@ -6,6 +6,7 @@
 // Enums for code readability
 enum AddressingMode {
 	Immediate,
+	Accumulator,
 	ZeroPage,
 	ZeroPageX,
 	ZeroPageY,

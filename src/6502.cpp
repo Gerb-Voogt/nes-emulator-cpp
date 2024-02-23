@@ -281,6 +281,9 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 		case AddressingMode::Immediate: {
 			return this->program_counter;
 		}
+		case AddressingMode::Accumulator: {
+			return this->register_a;
+		}
 		case AddressingMode::ZeroPage: {
 			return (uint16_t)memory_read(this->program_counter);
 		}
