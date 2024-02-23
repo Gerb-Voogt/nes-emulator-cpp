@@ -93,52 +93,52 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		// nop instruction
 		case 0xEA: {
-			this->nop();
+			this->NOP();
 		}
 		// lda instructions
 		case 0xA9: { // immediate
-			this->lda(AddressingMode::Immediate);
+			this->LDA(AddressingMode::Immediate);
 			this->program_counter += 1;
 		}
 		case 0xA5: { // Zero Page
-			this->lda(AddressingMode::ZeroPage);
+			this->LDA(AddressingMode::ZeroPage);
 			this->program_counter += 1;
 		}
 		case 0xB5: { // Zero Page
-			this->lda(AddressingMode::ZeroPageX);
+			this->LDA(AddressingMode::ZeroPageX);
 			this->program_counter += 1;
 		}
 		case 0xAD: { // Absolute
-			this->lda(AddressingMode::Absolute);
+			this->LDA(AddressingMode::Absolute);
 			this->program_counter += 2;
 		}
 		case 0xBD: { // AbsoluteX
-			this->lda(AddressingMode::AbsoluteX);
+			this->LDA(AddressingMode::AbsoluteX);
 			this->program_counter += 2;
 		}
 		case 0xB9: { // AbsoluteY
-			this->lda(AddressingMode::AbsoluteY);
+			this->LDA(AddressingMode::AbsoluteY);
 			this->program_counter += 2;
 		}
 		case 0xA1: { // Indirect X
-			this->lda(AddressingMode::IndirectX);
+			this->LDA(AddressingMode::IndirectX);
 			this->program_counter += 1;
 		}
 		case 0xB1: { // Indirect Y
-			this->lda(AddressingMode::IndirectY);
+			this->LDA(AddressingMode::IndirectY);
 			this->program_counter += 1;
 		}
 		// tax
 		case 0xAA: {  // implied
-			this->tax();
+			this->TAX();
 		}
 		// inx
 		case 0xE9: { // implied
-			this->inx();
+			this->INX();
 		}
 		// iny
 		case 0xC8: { // implied
-			this->iny();
+			this->INY();
 		}
 	}
 }
@@ -159,9 +159,9 @@ void CPU::run() {
 	}
 }
 
-void CPU::nop() { } // Does literally nothing lol
+void CPU::NOP() { } // Does literally nothing lol
 
-void CPU::adc(const AddressingMode mode) {
+void CPU::ADC(const AddressingMode mode) {
 	const uint8_t operand_address = get_operand_address(mode);
 	const uint8_t operand = this->memory_read(operand_address);
 	const uint8_t sum = this->register_a + operand;
@@ -175,7 +175,7 @@ void CPU::adc(const AddressingMode mode) {
 	// sure how to go about detecting this
 }
 
-void CPU::lda(const AddressingMode mode) {
+void CPU::LDA(const AddressingMode mode) {
 	const uint8_t operand_address = get_operand_address(mode);
 	const uint8_t operand = this->memory_read(operand_address);
 
@@ -183,17 +183,17 @@ void CPU::lda(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
-void CPU::tax() {
+void CPU::TAX() {
 	this->register_irx = this->register_a;
 	update_zero_and_negative_flags(this->register_irx);
 }
 
-void CPU::inx() {
+void CPU::INX() {
 	this->register_irx = this->register_irx + 1;
 	update_zero_and_negative_flags(this->register_irx);
 }
 
-void CPU::iny() {
+void CPU::INY() {
 	this->register_iry = this->register_iry + 1;
 	update_zero_and_negative_flags(this->register_iry);
 }
