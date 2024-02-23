@@ -205,8 +205,6 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 		// add the carry if the flag is set
 		sum += 1;
 		update_carry_flag(Mode::Clear);
-<<<<<<< HEAD
-=======
 	}
 
 	// Carry if sum is larger then what fits in the 8-bit register
@@ -229,7 +227,6 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 	// Implying that overflow has happened
 	if ((result ^ operand) & (result ^ this->register_a) & 0x80) {
 		update_overflow_flag(Mode::Set);
->>>>>>> a5ad88543c6030b0f30785e0c9ca9ac75f1c13a8
 	}
 
 	// Carry if sum is larger then what fits in the 8-bit register
