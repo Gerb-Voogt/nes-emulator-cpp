@@ -105,25 +105,34 @@ class CPU {
 		
 		//@description Add with Carry, Adds content to accumulator together with the carry bit. Carry bit set if overflow occurs
 		//@param const AddressingMode mode, addressing mode to be used
-		void adc(const AddressingMode mode);
+		void ADC(const AddressingMode mode);
+
+		//@description Logical and operating on the accumulator
+		//@param const AddressingMode mode, addressing mode to be used
+		void AND(const AddressingMode mode);
+
+		//@description Logical and operating on the accumulator
+		//@param const AddressingMode mode, addressing mode to be used
+		void ASL(const AddressingMode mode);
 
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
-		void lda(const AddressingMode mode);
+		void LDA(const AddressingMode mode);
 
 		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register, setting Z and N flags
-		void tax();
+		void TAX();
 		
 		//@description Increment X register, adds one to the X register, setting Z and N flags
-		void inx();
+		void INX();
 
 		//@description Increment Y register, adds one to the Y register, setting Z and N flags
-		void iny();
+		void INY();
 		//
 		//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
-		void nop();
+		void NOP();
 
-		//@description Add an operand to the accumulator, accounting for carryover
+		//@description Add an operand to the accumulator, accounting for carryover. Note that this
+		//		function may update the overflow flag when overflow happens
 		//@param uint8_t operand, the operand to add to the accumulator
 		void add_to_accumulator_register(const uint8_t operand);
 

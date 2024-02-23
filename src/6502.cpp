@@ -176,6 +176,10 @@ void CPU::AND(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
+void CPU::ASL(const AddressingMode mode) {
+	const uint8_t operand = get_operand_address(mode);
+}
+
 void CPU::LDA(const AddressingMode mode) {
 	const uint8_t operand_address = get_operand_address(mode);
 	const uint8_t operand = this->memory_read(operand_address);
