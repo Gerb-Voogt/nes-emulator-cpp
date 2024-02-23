@@ -164,11 +164,11 @@ void CPU::NOP() { } // Does literally nothing lol
 void CPU::ADC(const AddressingMode mode) {
 	const uint8_t operand_address = get_operand_address(mode);
 	const uint8_t operand = this->memory_read(operand_address);
-	const uint8_t sum = this->register_a + operand;
+	add_to_accumulator_register(operand);
 
-	this->register_a += operand;
-	update_carry_flag(this->register_a, operand);
+	update_carry_flag(Mode::Set);
 	update_zero_and_negative_flags(this->register_a);
+}
 
 	// Note that the overflow bit V of the register _should_ also be updated
 	// The NESDEV wiki mentions "set if sign bit is incorrect" but right now I am not really
