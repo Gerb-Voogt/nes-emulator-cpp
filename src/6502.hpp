@@ -111,9 +111,9 @@ class CPU {
 		//@param const AddressingMode mode, addressing mode to be used
 		void AND(const AddressingMode mode);
 
-		//@description Logical and operating on the accumulator
+		//@description Arithmatic shift left
 		//@param const AddressingMode mode, addressing mode to be used
-		void ASL(const AddressingMode mode);
+		uint8_t ASL(const AddressingMode mode);
 
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used

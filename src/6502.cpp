@@ -176,8 +176,22 @@ void CPU::AND(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
-void CPU::ASL(const AddressingMode mode) {
-	const uint8_t operand = get_operand_address(mode);
+uint8_t CPU::ASL(const AddressingMode mode) {
+	uint8_t operand = get_operand_address(mode);
+
+	if ((operand & 0b10000000) == 0) { 
+		// If this is 0, then 1 should be added to the carry
+		update_carry_flag(Mode::Set);
+	} else {
+		update_carry_flag(Mode::Clear);
+	}
+
+	if (mode == AddressingMode::Accumulator) {
+		// store in the accumulator if addressing mode is Accumulator
+		this->register_a = operand << 1;
+	}
+	// return the result (still return if it is in the accumulator)
+	return operand << 2;
 }
 
 void CPU::LDA(const AddressingMode mode) {
