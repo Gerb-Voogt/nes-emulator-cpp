@@ -1,18 +1,19 @@
 PROGRAM=main
 CC=gcc
+CXX=g++
 CFLAGS=-Wall -g
 
 VERBOSE:=
 
 SRC=$(wildcard src/*.cpp)
 
-all: $(PROGRAM)
+default: ${PROGRAM}
 
-$(PROGRAM): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $(SRC) -lstdc++
+${PROGRAM}:
+	${CXX} ${CFLAGS} -o $@ ${SRC}
 
-test: $(SRC)
-	$(verbose)$(CC) -DTEST $(CFLAGS) -o $@ $(SRC) $(TESTS) -lstdc++
+test: ${SRC}
+	${verbose}${CXX} -DTEST ${CFLAGS} -o $@ ${SRC} 
 
 clean: 
-	rm -f $(PROGRAM) test
+	rm -f ${PROGRAM} test
