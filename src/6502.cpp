@@ -179,19 +179,23 @@ void CPU::AND(const AddressingMode mode) {
 uint8_t CPU::ASL(const AddressingMode mode) {
 	uint8_t operand = get_operand_address(mode);
 
-	if ((operand & 0b10000000) == 0) { 
-		// If this is 0, then 1 should be added to the carry
+	if ((operand & 0b10000000) != 0) { 
+		// If this is not 0, then 1 should be added to the carry
 		update_carry_flag(Mode::Set);
 	} else {
 		update_carry_flag(Mode::Clear);
 	}
 
+	uint8_t result = operand << 1;
+
 	if (mode == AddressingMode::Accumulator) {
 		// store in the accumulator if addressing mode is Accumulator
-		this->register_a = operand << 1;
+		this->register_a = result;
 	}
+
+	update_zero_and_negative_flags(result);
 	// return the result (still return if it is in the accumulator)
-	return operand << 2;
+	return result;
 }
 
 void CPU::LDA(const AddressingMode mode) {
