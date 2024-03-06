@@ -179,9 +179,21 @@ void CPU::ADC(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
+void CPU::BCC() {
+	if ((this->status & Flag::Carry) == 0) {
+		// Read the label for the jump to be made and jump to the address
+		uint8_t jmp = this->memory_read(this->program_counter);
+		uint16_t jmp_addr = this->program_counter + 1 + jmp;
+
+		// Update the program counter
+		this->program_counter = jmp_addr;
+	}
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
+
 	// Update register and flags
 	this->register_a = this->register_a & operand;
 	update_zero_and_negative_flags(this->register_a);

@@ -56,9 +56,6 @@ class CPU {
 		//@description default Constructor Initializes all CPU registers to 0
 		CPU();
 	
-		//@description Destructor, clean up the CPU object
-		~CPU();
-
 		//@description Read memory from address
 		//@param uint16_t addr, the address to read
 		uint8_t memory_read(const uint16_t addr) const;
@@ -96,7 +93,7 @@ class CPU {
 		void execute_instruction(const uint8_t opcode);
 
 		//@description Interpret a program (sequence of instructions). Cycle consists of fetching an instruction from the PC address, decoding this
-		// instruction and executing this instruction, and repeat. Mainly useful as a debugging interface and for unit testing
+		//  instruction and executing this instruction, and repeat. Mainly useful as a debugging interface and for unit testing
 		//@param std::vector<uint8_t> Program, sequence of instructions
 		int interpret(const std::vector<uint8_t> program);
 
@@ -107,13 +104,20 @@ class CPU {
 		//@param const AddressingMode mode, addressing mode to be used
 		void ADC(const AddressingMode mode);
 
-		//@description Logical and operating on the accumulator
-		//@param const AddressingMode mode, addressing mode to be used
+		//@description Logical and operating on the accumulator.
+		//@param const AddressingMode mode, addressing mode to be used. Supported addressing
+		//  modes are [Immediate, Zero Page, Zero PageX, Absolute, AbsoluteX, AbsoluteY, IndirectX, IndirectY]
 		void AND(const AddressingMode mode);
 
 		//@description Arithmatic shift left
 		//@param const AddressingMode mode, addressing mode to be used
 		uint8_t ASL(const AddressingMode mode);
+
+		//@description Branch if Carry Clear, branch to a new location if the carry flag is clear
+		void BCC();
+
+		//@description Branch if Carry Set, branch to a new location if the carry flag is set
+		void BCS();
 
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
@@ -130,6 +134,9 @@ class CPU {
 		//
 		//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
 		void NOP();
+
+		//@description branch to a new location
+		void branch();
 
 		//@description Add an operand to the accumulator, accounting for carryover. Note that this
 		//		function may update the overflow flag when overflow happens
