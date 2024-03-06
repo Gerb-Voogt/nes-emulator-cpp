@@ -1,7 +1,7 @@
 PROGRAM=main
 CC=gcc
 CXX=g++
-CFLAGS=-Wall -g
+CFLAGS=-Wall
 
 VERBOSE:=
 
@@ -13,7 +13,7 @@ ${PROGRAM}:
 	${CXX} ${CFLAGS} -o $@ ${SRC}
 
 test: ${SRC}
-	${verbose}${CXX} -DTEST ${CFLAGS} -o $@ ${SRC} 
+	${verbose}${CXX} -DTEST ${CFLAGS} -g -o $@ ${SRC} 
 
 clean: 
 	rm -f ${PROGRAM} test
