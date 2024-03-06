@@ -19,11 +19,6 @@ CPU::CPU() {
 	}
 }
 
-CPU::~CPU() {
-	// All values are stack allocated, no deallocation needs to be taken
-	// care off. The values will automatically get resolved once their lifetime ends.
-}
-
 uint8_t CPU::memory_read(const uint16_t addr) const {
 	return this->memory[addr];
 }
@@ -90,65 +85,79 @@ void CPU::execute_instruction(const uint8_t opcode) {
 	switch (opcode) {
 		// brk instruction, do nothing, execution should have terminated before this
 		case 0x00: {
+			break;
 		}
 		// nop instruction
 		case 0xEA: {
 			this->NOP();
+			break;
 		}
 		// lda instructions
 		case 0xA9: { // immediate
 			this->LDA(AddressingMode::Immediate);
 			this->program_counter += 1;
+			break;
 		}
 		case 0xA5: { // Zero Page
 			this->LDA(AddressingMode::ZeroPage);
 			this->program_counter += 1;
+			break;
 		}
 		case 0xB5: { // Zero Page
 			this->LDA(AddressingMode::ZeroPageX);
 			this->program_counter += 1;
+			break;
 		}
 		case 0xAD: { // Absolute
 			this->LDA(AddressingMode::Absolute);
 			this->program_counter += 2;
+			break;
 		}
 		case 0xBD: { // AbsoluteX
 			this->LDA(AddressingMode::AbsoluteX);
 			this->program_counter += 2;
+			break;
 		}
 		case 0xB9: { // AbsoluteY
 			this->LDA(AddressingMode::AbsoluteY);
 			this->program_counter += 2;
+			break;
 		}
 		case 0xA1: { // Indirect X
 			this->LDA(AddressingMode::IndirectX);
 			this->program_counter += 1;
+			break;
 		}
 		case 0xB1: { // Indirect Y
 			this->LDA(AddressingMode::IndirectY);
 			this->program_counter += 1;
+			break;
 		}
 		// tax
 		case 0xAA: {  // implied
 			this->TAX();
+			break;
 		}
 		// inx
 		case 0xE9: { // implied
 			this->INX();
+			break;
 		}
 		// iny
 		case 0xC8: { // implied
 			this->INY();
+			break;
 		}
 	}
 }
 
 int CPU::interpret(std::vector<uint8_t> program) {
-	while (true) {
-		uint8_t opcode = program[this->program_counter]; // Fetch the instruction
+	while (this->program_counter <= program.size()) {
+		const uint8_t opcode = program[this->program_counter]; // Fetch the instruction
 		this->program_counter += 1;
 		this->execute_instruction(opcode);
 	}
+	return 0;
 }
 
 void CPU::run() {
@@ -159,11 +168,11 @@ void CPU::run() {
 	}
 }
 
-void CPU::NOP() { } // Does literally nothing lol
+void CPU::NOP() { } // Does literally nothing, adds a cycle to the cycle counter?
 
 void CPU::ADC(const AddressingMode mode) {
-	const uint8_t operand_address = get_operand_address(mode);
-	const uint8_t operand = this->memory_read(operand_address);
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
 	add_to_accumulator_register(operand);
 
 	update_carry_flag(Mode::Set);
@@ -171,13 +180,16 @@ void CPU::ADC(const AddressingMode mode) {
 }
 
 void CPU::AND(const AddressingMode mode) {
-	const uint8_t operand = get_operand_address(mode);
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+	// Update register and flags
 	this->register_a = this->register_a & operand;
 	update_zero_and_negative_flags(this->register_a);
 }
 
 uint8_t CPU::ASL(const AddressingMode mode) {
-	uint8_t operand = get_operand_address(mode);
+	uint16_t operand_adress = get_operand_address(mode);
+	uint8_t operand = memory_read(operand_adress);
 
 	if ((operand & 0b10000000) != 0) { 
 		// If this is not 0, then 1 should be added to the carry
@@ -199,7 +211,7 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 }
 
 void CPU::LDA(const AddressingMode mode) {
-	const uint8_t operand_address = get_operand_address(mode);
+	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = this->memory_read(operand_address);
 
 	this->register_a = operand;
@@ -302,7 +314,8 @@ void CPU::update_overflow_flag(const Mode mode) {
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
 		case AddressingMode::Immediate: {
-			return this->program_counter;
+			// Add 0x8000, as program does not live in the zero page
+			return this->program_counter + 0x8000;
 		}
 		case AddressingMode::Accumulator: {
 			return this->register_a;
