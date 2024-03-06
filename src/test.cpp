@@ -7,6 +7,7 @@
 void test_lda_immediate_load_state() {
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x05, 0x00};
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_a == 0x05);
@@ -19,6 +20,7 @@ void test_lda_immediate_load_state() {
 void test_lda_zero_flag() {
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0x00};
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_a == 0x00);
@@ -31,6 +33,7 @@ void test_lda_zero_flag() {
 void test_tax_load_state() {
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x05, 0xAA, 0x00};
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_irx == 0x05);
@@ -44,6 +47,7 @@ void test_tax_load_state() {
 void test_tax_zero_flag() {
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0x00};
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_irx == 0x00);
@@ -55,6 +59,7 @@ void test_tax_zero_flag() {
 void test_inx() {
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xE9, 0x00}; // Move 0x00 into register x and increment by 1
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_irx == 0x01);
@@ -67,6 +72,7 @@ void test_inx_overflow() {
 	CPU cpu = CPU();
 	cpu.register_irx = 0xFF; 
 	std::vector<uint8_t> program = {0xE9, 0xE9, 0x00};  // Increment irx twice
+	cpu.load_program(program);
 	cpu.interpret(program);
 
 	assert(cpu.register_irx == 0x01);

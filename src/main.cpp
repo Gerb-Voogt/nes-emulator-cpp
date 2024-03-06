@@ -26,7 +26,6 @@ int main() {
 
 	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xE9, 0x00}; // Move 0x00 into register x and increment by 1
 	nes_6505.load_program(program);
-	nes_6505.print_memory_content();
 	#ifdef TEST
 	run_tests();
 	#endif
