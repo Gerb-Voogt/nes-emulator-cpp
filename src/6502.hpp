@@ -123,7 +123,8 @@ class CPU {
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);
 
-		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register, setting Z and N flags
+		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
+		//	setting Z and N flags
 		void TAX();
 		
 		//@description Increment X register, adds one to the X register, setting Z and N flags

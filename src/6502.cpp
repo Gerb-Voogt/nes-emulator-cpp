@@ -152,7 +152,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 }
 
 int CPU::interpret(std::vector<uint8_t> program) {
-	while (this->program_counter <= program.size()) {
+	while (this->program_counter < program.size()) {
 		const uint8_t opcode = program[this->program_counter]; // Fetch the instruction
 		this->program_counter += 1;
 		this->execute_instruction(opcode);
