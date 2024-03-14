@@ -83,7 +83,7 @@ void CPU::reset() {
 
 void CPU::execute_instruction(const uint8_t opcode) {
 	switch (opcode) {
-		// brk instruction, do nothing, execution should have terminated before this
+		// brk instruction, execution should be terminated
 		case 0x00: {
 			break;
 		}
@@ -146,6 +146,11 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		// iny
 		case 0xC8: { // implied
 			this->INY();
+			break;
+		}
+		default: {
+			//[TODO]: Make this error handling more elegant with custom exception type
+			std::cerr << "Invalid OPCODE: " << unsigned(opcode) << std::endl;
 			break;
 		}
 	}
