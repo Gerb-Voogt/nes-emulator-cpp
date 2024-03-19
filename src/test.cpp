@@ -1,3 +1,11 @@
+// [TODO]: Implement tests for the following OPCODES:
+//		- ADC (Add With Carry)
+//		- AND (Logical AND)
+//		- ASL (Arithmatic Shift Left)
+//		- BCC (Branch if Carry Clear)
+//		- BCS (Branch if Carry Set)
+//		- INY (Increment Y register), Mostly the same as increment X
+//------------------------------------------------------------------------
 #include <cstdint>
 #include <cassert>
 #include <iostream>
@@ -74,6 +82,31 @@ void test_inx() {
 
 void test_inx_overflow() {
 	// Test whether the INX instruction properly handles the overflow case
+	CPU cpu = CPU();
+	cpu.register_irx = 0xFF; 
+	std::vector<uint8_t> program = {0xE9, 0xE9, 0x00};  // Increment irx twice to overflow
+	cpu.load_program(program);
+	cpu.interpret(program);
+
+	assert(cpu.register_irx == 0x01);
+	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+}
+
+void test_iny() {
+	// Test whether the INY instruction works as intended
+	CPU cpu = CPU();
+	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xE9, 0x00}; // Move 0x00 into register x and increment by 1
+	cpu.load_program(program);
+	cpu.interpret(program);
+
+	assert(cpu.register_irx == 0x01);
+	assert((cpu.status & Flag::Zero) == 0); // N flag should not be set
+
+	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+}
+
+void test_iny_overflow() {
+	// Test whether the INY instruction properly handles the overflow case
 	CPU cpu = CPU();
 	cpu.register_irx = 0xFF; 
 	std::vector<uint8_t> program = {0xE9, 0xE9, 0x00};  // Increment irx twice to overflow
