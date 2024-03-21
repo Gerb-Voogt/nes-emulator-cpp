@@ -1,3 +1,6 @@
 NES ebook, https://bugzmanov.github.io/nes_ebook/chapter_3_2.html, Contains a guide on writing an NES emulator in Rust
 NES 6502 OPCODES Documentation, https://www.nesdev.org/obelisk-6502-guide/reference.html#INX, Contains documentation on varies NES opcodes and what they do
 NES 6502 OPCODES Table, https://www.nesdev.org/wiki/CPU_unofficial_opcodes, contains a table of all the OPCODES and corresponding assembly instruction
+NES 6503 OPCODES implemented in Rust, https://github.com/bugzmanov/nes_ebook/blob/master/code/ch3.3/src/cpu.rs#L518
+Blog on 6502 emulator, https://skilldrick.github.io/easy6502/#addressing
+Info on 6502 addressing modes, https://www.nesdev.org/obelisk-6502-guide/addressing.html#REL
