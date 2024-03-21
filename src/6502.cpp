@@ -246,12 +246,12 @@ void CPU::TAY() {
 }
 
 void CPU::INX() {
-	this->register_irx = this->register_irx + 1;
+	this->register_irx += 1;
 	update_zero_and_negative_flags(this->register_irx);
 }
 
 void CPU::INY() {
-	this->register_iry = this->register_iry + 1;
+	this->register_iry += 1;
 	update_zero_and_negative_flags(this->register_iry);
 }
 
