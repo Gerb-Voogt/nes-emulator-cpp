@@ -356,6 +356,10 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			// Add 0x8000, as program does not live in the zero page
 			return this->program_counter + 0x8000;
 		}
+		case AddressingMode::Relative: {
+			uint8_t jmp = this->memory_read(this->program_counter);
+			uint16_t jmp_addr = this->program_counter + 1 + jmp;
+			return jmp_addr;
 		case AddressingMode::Accumulator: {
 			return this->register_a;
 		}
