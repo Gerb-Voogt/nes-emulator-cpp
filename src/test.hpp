@@ -21,3 +21,8 @@ void test_tax_zero_flag();
 // inx
 void test_inx();
 void test_inx_overflow();
+
+// iny
+void test_iny();
+void test_iny_overflow();
+

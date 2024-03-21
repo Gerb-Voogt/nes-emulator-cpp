@@ -240,6 +240,11 @@ void CPU::TAX() {
 	update_zero_and_negative_flags(this->register_irx);
 }
 
+void CPU::TAY() {
+	this->register_iry = this->register_a;
+	update_zero_and_negative_flags(this->register_iry);
+}
+
 void CPU::INX() {
 	this->register_irx = this->register_irx + 1;
 	update_zero_and_negative_flags(this->register_irx);

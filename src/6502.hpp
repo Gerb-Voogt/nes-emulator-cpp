@@ -127,6 +127,10 @@ class CPU {
 		//	setting Z and N flags
 		void TAX();
 		
+		//@description Transfer Accumulator to Y, copies current content of the accumulator into the Y register,
+		//	setting Z and N flags
+		void TAY();
+
 		//@description Increment X register, adds one to the X register, setting Z and N flags
 		void INX();
 
