@@ -78,7 +78,8 @@ void CPU::reset() {
 	this->register_iry = 0;
 	this->status = 0;
 
-	this->program_counter = this->memory_read_uint16(0xFFFC);
+	uint16_t first_instruction = 0xFFFC;
+	this->program_counter = this->memory_read_uint16(first_instruction);
 }
 
 void CPU::execute_instruction(const uint8_t opcode) {
