@@ -122,6 +122,9 @@ class CPU {
 
 		//@description Branch if EQual, branch to a new location if the zero flag is set
 		void BEQ();
+		//@description Branch if MInus, branch to a new location if the negative flag is set
+		void BMI();
+	
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);

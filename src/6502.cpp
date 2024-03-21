@@ -203,6 +203,12 @@ void CPU::BEQ() {
 	}
 }
 
+void CPU::BMI() {
+	if ((this->status & Flag::Negative) == Flag::Negative) {
+		this->program_counter = this->branch();
+	}
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
