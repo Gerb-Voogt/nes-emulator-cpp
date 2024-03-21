@@ -186,12 +186,13 @@ void CPU::ADC(const AddressingMode mode) {
 
 void CPU::BCC() {
 	if ((this->status & Flag::Carry) == 0) {
-		// Read the label for the jump to be made and jump to the address
-		uint8_t jmp = this->memory_read(this->program_counter);
-		uint16_t jmp_addr = this->program_counter + 1 + jmp;
+		this->program_counter = this->branch();
+	}
+}
 
-		// Update the program counter
-		this->program_counter = jmp_addr;
+void CPU::BCS() {
+	if ((this->status & Flag::Carry) == Flag::Carry) {
+		this->program_counter = this->branch();
 	}
 }
 
@@ -223,7 +224,7 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 	}
 
 	update_zero_and_negative_flags(result);
-	// return the result (still return if it is in the accumulator)
+	// return the result (also return if it is in the accumulator)
 	return result;
 }
 
@@ -253,6 +254,15 @@ void CPU::INX() {
 void CPU::INY() {
 	this->register_iry += 1;
 	update_zero_and_negative_flags(this->register_iry);
+}
+
+uint16_t CPU::branch() {
+	// Read the label for the jump to be made and jump to the address
+	uint8_t jmp = this->memory_read(this->program_counter);
+	uint16_t jmp_addr = this->program_counter + 1 + jmp;
+
+	// Update the program counter
+	return jmp_addr;
 }
 
 void CPU::add_to_accumulator_register(const uint8_t operand) {

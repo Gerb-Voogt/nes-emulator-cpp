@@ -141,7 +141,8 @@ class CPU {
 		void NOP();
 
 		//@description branch to a new location
-		void branch();
+		//@return uint16_t jmp_addr, address to jump to
+		uint16_t branch();
 
 		//@description Add an operand to the accumulator, accounting for carryover. Note that this
 		//		function may update the overflow flag when overflow happens
