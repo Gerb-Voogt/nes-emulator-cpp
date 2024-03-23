@@ -126,9 +126,10 @@ class CPU {
 		//@description BIT set, tests if one or more bits are set in a target memory location. The mask pattern A
 		//  is ANDed with the value in memory to set or clear the zero flag, however result is not kept.
 		//  bits 7 and 6 of the value from memory are copied into the N and V flags.
+		//  Updates the status register
 		//@param uint16_t bitmask
 		//	modes: [ZeroPage, Absolute]
-		void BIT(const uint8_t bitmask);
+		void BIT(const uint8_t bitmask, const AddressingMode mode);
 
 		//@description Branch if MInus, branch to a new location if the negative flag is set
 		void BMI();

@@ -204,8 +204,22 @@ void CPU::BEQ() {
 	}
 }
 
-void CPU::BIT(const uint8_t bitmask) {
-	// [TODO]: implement this
+void CPU::BIT(const uint8_t bitmask, const AddressingMode mode) {
+	uint16_t operand_address = get_operand_address(mode);
+	uint8_t operand = this->memory_read(operand_address);
+
+	// Take the logical AND 
+	const uint8_t result = (operand & bitmask);
+
+	// Update N and Z flags
+	update_zero_and_negative_flags(result);
+	
+	// Update V flag
+	if ((result & Flag::Overflow) != 0) {
+		update_overflow_flag(Mode::Set);
+	} else {
+		update_overflow_flag(Mode::Clear);
+	}
 }
 
 void CPU::BMI() {
