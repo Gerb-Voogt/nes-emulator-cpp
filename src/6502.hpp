@@ -199,13 +199,10 @@ class CPU {
 		//@param uint8_t reg, the register used to update
 		void update_zero_and_negative_flags(const uint8_t reg);
 
-		//@description Update overflow flag
-		//@param uint8_t reg, the register used to update the status register
-		//@param uint8_t reg, the operand used, used to check if carryover should occur
-		void update_carry_flag(const Mode mode);
-
-		//@description Update overflow flag
-		void update_overflow_flag(const Mode mode);
+		//@description Update the flag
+		//@param const Flag flag, the flag to operate on
+		//@param const Mode mode, the operation to take, can be set, clear and update
+		void update_flag(const Flag flag, const Mode mode);
 
 		//@description Get the address of the operands based on the addressing mode
 		//@param AddressingMode mode, The addressingmode being used (immediate, absolute, etc.)

@@ -183,7 +183,7 @@ void CPU::ADC(const AddressingMode mode) {
 	const uint8_t operand = memory_read(operand_address);
 	add_to_accumulator_register(operand);
 
-	update_carry_flag(Mode::Set);
+	update_flag(Flag::Carry, Mode::Set);
 	update_zero_and_negative_flags(this->register_a);
 }
 
@@ -217,9 +217,9 @@ void CPU::BIT(const uint8_t bitmask, const AddressingMode mode) {
 	
 	// Update V flag
 	if ((result & Flag::Overflow) != 0) {
-		update_overflow_flag(Mode::Set);
+		update_flag(Flag::Overflow, Mode::Set);
 	} else {
-		update_overflow_flag(Mode::Clear);
+		update_flag(Flag::Overflow, Mode::Clear);
 	}
 }
 
@@ -268,9 +268,9 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 
 	if ((operand & 0b10000000) != 0) { 
 		// If this is not 0, then 1 should be added to the carry
-		update_carry_flag(Mode::Set);
+		update_flag(Flag::Carry, Mode::Set);
 	} else {
-		update_carry_flag(Mode::Clear);
+		update_flag(Flag::Carry, Mode::Clear);
 	}
 
 	uint8_t result = operand << 1;
@@ -329,12 +329,12 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 	if ((this->status & Flag::Carry) != 0) {
 		// add the carry if the flag is set
 		sum += 1;
-		update_carry_flag(Mode::Clear);
+		update_flag(Flag::Carry, Mode::Clear);
 	}
 
 	// Carry if sum is larger then what fits in the 8-bit register
 	if (sum > 0xFF) {
-		update_carry_flag(Mode::Set);
+		update_flag(Flag::Carry, Mode::Set);
 	}
 
 	const uint8_t result = (uint8_t)sum;
@@ -351,31 +351,31 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 	//		Adding a negative number to the register with negative content resulted in a positive number
 	// Implying that overflow has happened
 	if ((result ^ operand) & (result ^ this->register_a) & 0x80) {
-		update_overflow_flag(Mode::Set);
+		update_flag(Flag::Overflow, Mode::Set);
 	}
 
 	// Carry if sum is larger then what fits in the 8-bit register
 	if (sum > 0xFF) {
-		update_carry_flag(Mode::Set);
+		update_flag(Flag::Carry, Mode::Set);
 	}
 
 	this->register_a = result;
 }
 
-void CPU::update_carry_flag(const Mode mode) {
+void CPU::update_flag(const Flag flag, const Mode mode) {
 	if (mode == Mode::Set) {
-		this->status = this->status | Flag::Carry;
+		this->status = this->status | flag;
 	} else if (mode == Mode::Clear) {
-		this->status = this->status & ~Flag::Carry;
+		this->status = this->status & ~flag;
 	} else if (mode == Mode::Update) {
 		// Check the current status of the register
 		// if it's 1, unset it, otherwise set it
-		const uint8_t register_status = this->status & Flag::Carry;
+		const uint8_t register_status = this->status & flag;
 		if (register_status == 0) {
-			this->status = this->status | Flag::Carry;
+			this->status = this->status | flag;
 		}
 		else if (register_status == 1) {
-			this->status = this->status & ~Flag::Carry;
+			this->status = this->status & ~flag;
 		}
 	}
 }
@@ -392,14 +392,6 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 		this->status = this->status & ~Flag::Negative;
 	}
 }
-
-void CPU::update_overflow_flag(const Mode mode) {
-	if (mode == Mode::Set) {
-		this->status = this->status | Flag::Overflow;
-	} else if (mode == Mode::Clear) {
-		this->status = this->status & ~Flag::Overflow;
-	}
-};
 
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
@@ -472,7 +464,9 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	return 0;
 }
 
-// Debug Functions
+// +-----------------+
+// | Debug Functions |
+// +-----------------+
 
 // This function should be changed such that it prints out a more readable
 // table format rather than dumping all the text to the screen like it does not
