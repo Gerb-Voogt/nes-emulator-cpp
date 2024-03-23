@@ -204,6 +204,10 @@ void CPU::BEQ() {
 	}
 }
 
+void CPU::BIT(const uint8_t bitmask) {
+	// [TODO]: implement this
+}
+
 void CPU::BMI() {
 	if ((this->status & Flag::Negative) == Flag::Negative) {
 		this->program_counter = this->branch();
