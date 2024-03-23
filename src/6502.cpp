@@ -83,6 +83,7 @@ void CPU::reset() {
 }
 
 void CPU::execute_instruction(const uint8_t opcode) {
+	// [TODO]: Wrap the instruction in an enum for better matching
 	switch (opcode) {
 		// brk instruction, execution should be terminated
 		case 0x00: {
@@ -277,6 +278,7 @@ void CPU::INY() {
 }
 
 uint16_t CPU::branch() {
+	// [TODO]: refactor this to get jump address using the memory read API and adressing mode
 	// Read the label for the jump to be made and jump to the address
 	uint8_t jmp = this->memory_read(this->program_counter);
 	uint16_t jmp_addr = this->program_counter + 1 + jmp;
