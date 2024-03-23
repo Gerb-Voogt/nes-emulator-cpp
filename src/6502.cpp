@@ -11,6 +11,7 @@ CPU::CPU() {
 	register_irx = 0;
 	register_iry = 0;
 	program_counter = 0;
+	stack_pointer = 0x01FF;
 	status = 0;
 
 	// Initialize memory space to 0
@@ -238,6 +239,17 @@ void CPU::BPL() {
 	if ((this->status & Flag::Zero) == 0) { 
 		this->program_counter = this->branch();
 	}
+}
+
+// Look into getting this to work
+void CPU::BRK() {
+	// Push program counter and processor status onto the stack
+
+
+	uint16_t interrupt_vector = 0xFFFE;
+	this->program_counter = this->memory_read(interrupt_vector);
+	// Set the break flag to 1
+	this->status = this->status | Flag::Break;
 }
 
 

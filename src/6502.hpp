@@ -57,6 +57,10 @@ class CPU {
 		//@description default Constructor Initializes all CPU registers to 0
 		CPU();
 	
+		// +--------------------------------------------------+
+		// | Generic memory interface for reading and writing |
+		// +--------------------------------------------------+
+	
 		//@description Read memory from address
 		//@param uint16_t addr, the address to read
 		uint8_t memory_read(const uint16_t addr) const;
@@ -83,6 +87,22 @@ class CPU {
 		//@param uint16_t addr, the address to write
 		//@param std::vec<uint8_t> program, vector containing the program instructions
 		void load_program_and_run(const std::vector<uint8_t> program);
+
+		// +-----------------+
+		// | Stack Interface |
+		// +-----------------+
+
+		//@description Push a value onto the stack, stack pointer is updated to point to the new top of the stack
+		//@param uint8_t value, the value to push onto the stack
+		void push_stack(const uint8_t value);
+
+		//@description Pull a value from the stack, stack pointer is updated to point towards the new top of the stack
+		//@return uint8_t data, the data the stack pointer in pointing to
+		uint8_t pull_stack();
+
+		// +--------------------------------------------+
+		// | Program Execution and Instruction Handling |
+		// +--------------------------------------------+
 
 		//@description Special subroutine that gets called when a cartridge is inserted
 		// resets the state (registers and flags all get set to 0) and sets the program counter
@@ -139,6 +159,11 @@ class CPU {
 
 		//@description Branch if Positive, branch to a new location if the negative flag is clear
 		void BPL();
+
+		//@description Force Interrupt, forces the generation of an interupt request. Program counter and processor status
+		//	are pushed to the stack, then the IRQ interrupt vector at $FFFE/F is loaded into the PC and the break flag
+		//	is set to 1
+		void BRK();
 
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
