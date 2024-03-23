@@ -137,6 +137,9 @@ class CPU {
 		//@description Branch if Not Equal, branch to a new location if the zero flag is clear
 		void BNE();
 
+		//@description Branch if Positive, branch to a new location if the negative flag is clear
+		void BPL();
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);

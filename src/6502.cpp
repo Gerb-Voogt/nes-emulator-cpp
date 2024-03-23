@@ -229,7 +229,13 @@ void CPU::BMI() {
 }
 
 void CPU::BNE() {
-	if ((this->status & Flag::Zero) == 0) {
+	if ((this->status & Flag::Zero) != 0) {
+		this->program_counter = this->branch();
+	}
+}
+
+void CPU::BPL() {
+	if ((this->status & Flag::Zero) == 0) { 
 		this->program_counter = this->branch();
 	}
 }
