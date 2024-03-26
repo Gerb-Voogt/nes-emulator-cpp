@@ -165,6 +165,13 @@ class CPU {
 		//	is set to 1
 		void BRK();
 
+		//@description CoMPare accumulator, compares memory held at specified address against the accumulator. 
+		//	Carry flag set if A >= M, Zero-Flag set if A == M. Sets the negative bit if the result is negative.
+		//	CMP basically sets flags as if a subtraction happened.
+		//@param const AddressingMode mode
+		//	modes: [..., ..., ...] [TODO]: Fill this in
+		void CMP(const AddressingMode mode);
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);

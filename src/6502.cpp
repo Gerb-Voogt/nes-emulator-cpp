@@ -252,6 +252,18 @@ void CPU::BRK() {
 	this->status = this->status | Flag::Break;
 }
 
+void CPU::CMP(const AddressingMode mode) {
+	uint16_t operand_address = this->get_operand_address(mode);
+	uint8_t operand = this->memory_read(operand_address);
+
+	if (operand == this->register_a) {
+		update_flag(Flag::Zero, Mode::Set);
+	} else if (this->register_a > operand) {
+		update_flag(Flag::Carry, Mode::Set);
+	} else if (((this->register_a - operand) & 0b10000000) == 0) {
+		update_flag(Flag::Negative, Mode::Set);
+	}
+}
 
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
