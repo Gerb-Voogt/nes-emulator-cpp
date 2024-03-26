@@ -241,6 +241,18 @@ void CPU::BPL() {
 	}
 }
 
+void CPU::BVC() {
+	if ((this->status & Flag::Overflow) == 0) { 
+		this->program_counter = this->branch();
+	}
+}
+
+void CPU::BVS() {
+	if ((this->status & Flag::Overflow) != 0) { 
+		this->program_counter = this->branch();
+	}
+}
+
 // Look into getting this to work
 void CPU::BRK() {
 	// Push program counter and processor status onto the stack
