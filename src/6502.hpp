@@ -172,6 +172,24 @@ class CPU {
 		//	modes: [..., ..., ...] [TODO]: Fill this in
 		void CMP(const AddressingMode mode);
 
+		//@description ComPare X register, compares memory held at specified address against the X-register. 
+		//	Carry flag set if A >= M, Zero-Flag set if A == M. Sets the negative bit if the result is negative.
+		//	CMP basically sets flags as if a subtraction happened.
+		//@param const AddressingMode mode
+		//	modes: [..., ..., ...] [TODO]: Fill this in
+		void CPX(const AddressingMode mode);
+
+		//@description ComPare Y register, compares memory held at specified address against the Y-register. 
+		//	Carry flag set if A >= M, Zero-Flag set if A == M. Sets the negative bit if the result is negative.
+		//	CMP basically sets flags as if a subtraction happened.
+		//@param const AddressingMode mode
+		//	modes: [..., ..., ...] [TODO]: Fill this in
+		void CPY(const AddressingMode mode);
+
+		//@description DECrement memory, subtracts one from the value held at a specific location in memory.
+		//@param AddressingMode mode
+		void DEC(const AddressingMode mode);
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);
@@ -189,7 +207,7 @@ class CPU {
 
 		//@description Increment Y register, adds one to the Y register, setting Z and N flags
 		void INY();
-		//
+
 		//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
 		void NOP();
 

@@ -265,16 +265,15 @@ void CPU::BRK() {
 }
 
 void CPU::CMP(const AddressingMode mode) {
-	uint16_t operand_address = this->get_operand_address(mode);
-	uint8_t operand = this->memory_read(operand_address);
+	this->compare(this->register_a, mode);
+}
 
-	if (operand == this->register_a) {
-		update_flag(Flag::Zero, Mode::Set);
-	} else if (this->register_a > operand) {
-		update_flag(Flag::Carry, Mode::Set);
-	} else if (((this->register_a - operand) & 0b10000000) == 0) {
-		update_flag(Flag::Negative, Mode::Set);
-	}
+void CPU::CPX(const AddressingMode mode) {
+	this->compare(this->register_irx, mode);
+}
+
+void CPU::CPY(const AddressingMode mode) {
+	this->compare(this->register_iry, mode);
 }
 
 void CPU::AND(const AddressingMode mode) {
@@ -345,6 +344,19 @@ uint16_t CPU::branch() {
 
 	// Update the program counter
 	return jmp_addr;
+}
+
+void CPU::compare(const uint8_t reg, const AddressingMode mode) {
+	uint16_t operand_address = this->get_operand_address(mode);
+	uint8_t operand = this->memory_read(operand_address);
+
+	if (operand == reg) {
+		update_flag(Flag::Zero, Mode::Set);
+	} else if (reg > operand) {
+		update_flag(Flag::Carry, Mode::Set);
+	} else if (((reg - operand) & 0b10000000) == 0) {
+		update_flag(Flag::Negative, Mode::Set);
+	}
 }
 
 void CPU::add_to_accumulator_register(const uint8_t operand) {
