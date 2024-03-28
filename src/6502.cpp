@@ -276,6 +276,14 @@ void CPU::CPY(const AddressingMode mode) {
 	this->compare(this->register_iry, mode);
 }
 
+void CPU::DEC(const AddressingMode mode) {
+	const uint16_t operand_addres = get_operand_address(mode);
+	const uint8_t value = memory_read(operand_addres);
+
+	memory_write(operand_addres, value-1);
+	update_zero_and_negative_flags(value-1);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);

@@ -215,6 +215,10 @@ class CPU {
 		//@return uint16_t jmp_addr, address to jump to
 		uint16_t branch();
 
+		//@description Compare an operand and register value
+		//	flags: Z,N,V
+		void compare(const uint8_t reg, const AddressingMode mode);
+
 		//@description Add an operand to the accumulator, accounting for carryover. Note that this
 		//		function may update the overflow flag when overflow happens
 		//@param uint8_t operand, the operand to add to the accumulator
