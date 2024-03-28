@@ -196,6 +196,12 @@ class CPU {
 		//@param AddressingMode mode
 		void DEC(const AddressingMode mode);
 
+		//@description DEcrement X-register, subtracts one
+		void DEX();
+
+		//@description DEcrement Y-register, subtracts one
+		void DEY();
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);
