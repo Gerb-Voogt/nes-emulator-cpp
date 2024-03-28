@@ -218,6 +218,10 @@ class CPU {
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);
 
+		//@description JuMP, sets the program counter to the address specified
+		//@param `const AddressingMode mode`, addressing mode to be used
+		void JMP(const AddressingMode mode);
+
 		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
 		//	setting Z and N flags
 		void TAX();
