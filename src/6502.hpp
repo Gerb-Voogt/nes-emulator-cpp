@@ -202,6 +202,9 @@ class CPU {
 		//@description DEcrement Y-register, subtracts one
 		void DEY();
 
+		//@description Exclusive OR, reads a value from and provides an exclusive or against the accumulator
+		void EOR(const AddressingMode mode);
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);

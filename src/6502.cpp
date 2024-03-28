@@ -294,6 +294,14 @@ void CPU::DEY() {
 	update_zero_and_negative_flags(this->register_iry);
 }
 
+void CPU::EOR(const AddressingMode mode) {
+	const uint16_t operand_addres = get_operand_address(mode);
+	const uint8_t value = memory_read(operand_addres);
+
+	this->register_a = this->register_a ^ value;
+	update_zero_and_negative_flags(this->register_a);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
