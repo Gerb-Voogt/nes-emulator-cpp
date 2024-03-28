@@ -302,6 +302,14 @@ void CPU::EOR(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
+void CPU::INC(const AddressingMode mode) {
+	const uint16_t operand_addres = get_operand_address(mode);
+	uint8_t value = memory_read(operand_addres);
+
+	memory_write(operand_addres, value+1);
+	update_zero_and_negative_flags(value+1);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
