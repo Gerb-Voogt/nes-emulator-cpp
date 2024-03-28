@@ -208,6 +208,12 @@ class CPU {
 		//@description INCrement memory, increment the memory located at specified address, setting Z and N flags
 		void INC(const AddressingMode mode);
 
+		//@description INcrement X register, increment the memory located at specified address, setting Z and N flags
+		void INX();
+
+		//@description INcrement Y register, increment the memory located at specified address, setting Z and N flags
+		void INY();
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);

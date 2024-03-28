@@ -310,6 +310,16 @@ void CPU::INC(const AddressingMode mode) {
 	update_zero_and_negative_flags(value+1);
 }
 
+void CPU::INX() {
+	this->register_irx += 1;
+	update_zero_and_negative_flags(this->register_irx);
+}
+
+void CPU::INY() {
+	this->register_iry += 1;
+	update_zero_and_negative_flags(this->register_iry);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
