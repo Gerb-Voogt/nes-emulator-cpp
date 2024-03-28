@@ -230,12 +230,6 @@ class CPU {
 		//	setting Z and N flags
 		void TAY();
 
-		//@description Increment X register, adds one to the X register, setting Z and N flags
-		void INX();
-
-		//@description Increment Y register, adds one to the Y register, setting Z and N flags
-		void INY();
-
 		//@description NOP, does nothing, this is mainly here to possibly be cycle accurate in the future
 		void NOP();
 

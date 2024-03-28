@@ -375,16 +375,6 @@ void CPU::TAY() {
 	update_zero_and_negative_flags(this->register_iry);
 }
 
-void CPU::INX() {
-	this->register_irx += 1;
-	update_zero_and_negative_flags(this->register_irx);
-}
-
-void CPU::INY() {
-	this->register_iry += 1;
-	update_zero_and_negative_flags(this->register_iry);
-}
-
 uint16_t CPU::branch() {
 	// [TODO]: refactor this to get jump address using the memory read API and adressing mode
 	// Read the label for the jump to be made and jump to the address
