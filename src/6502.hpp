@@ -160,6 +160,12 @@ class CPU {
 		//@description Branch if Positive, branch to a new location if the negative flag is clear
 		void BPL();
 
+		//@description Branch if oVerflow Clear
+		void BVC();
+
+		//@description Branch if oVerflow Set
+		void BVS();
+
 		//@description Force Interrupt, forces the generation of an interupt request. Program counter and processor status
 		//	are pushed to the stack, then the IRQ interrupt vector at $FFFE/F is loaded into the PC and the break flag
 		//	is set to 1
