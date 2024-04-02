@@ -329,6 +329,119 @@ void CPU::JMP(const AddressingMode mode) {
 	this->program_counter = address;
 }
 
+void CPU::LDX(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	this->register_a = operand;
+	update_zero_and_negative_flags(this->register_a);
+}
+
+void CPU::LDY(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	this->register_a = operand;
+	update_zero_and_negative_flags(this->register_a);
+}
+
+uint8_t CPU::LSR(const AddressingMode mode) {
+	// Why is it Logical Shift Right but Arithmatic Shift Left???
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	// Set the carry flag if the first bit is set
+	if ((operand & 0b00000001) == 0) {
+		update_flag(Flag::Carry, Mode::Clear);
+	} else {
+		update_flag(Flag::Carry, Mode::Set);
+	}
+
+	const uint8_t result = operand >> 1;
+
+	if (mode == AddressingMode::Accumulator) {
+		this->register_a = result;
+	} else {
+		memory_write(operand_address, result);
+	update_zero_and_negative_flags(result);
+
+	return result;
+}
+
+void CPU::ORA(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	this->register_a = this->register_a | operand;
+	update_zero_and_negative_flags(this->register_a);
+}
+
+void CPU::ROL(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	uint8_t result = operand << 1;
+
+	// Update the 0 bit by using the old Carry flag
+	if ((this->status & Flag::Carry) == Flag::Carry) {
+		// Flag is set	
+		result = result | 0b00000001;
+	} 
+
+	// Update the Carry flag to the new value
+	if ((operand & 0b10000000) == 0) {
+		// bit 7 not set
+		update_flag(Flag::Carry, Mode::Clear);
+	} else {
+		update_flag(Flag::Carry, Mode::Set);
+	}
+
+	update_zero_and_negative_flags(result);
+
+	// Write the value to the correct location (either accumulator or into memory
+	if (mode == AddressingMode::Accumulator) {
+		this->register_a = result;
+	} else {
+		memory_write(operand_address, result);
+	}
+
+}
+
+void CPU::ROR(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	uint8_t result = operand >> 1;
+
+	// Update the 0 bit by using the old Carry flag
+	if ((this->status & Flag::Carry) == Flag::Carry) {
+		// Flag is set	
+		result = result | 0b10000000;
+	} 
+
+	// Update the Carry flag to the new value
+	if ((operand & 0b00000001) == 0) {
+		// bit 7 not set
+		update_flag(Flag::Carry, Mode::Clear);
+	} else {
+		update_flag(Flag::Carry, Mode::Set);
+	}
+
+	update_zero_and_negative_flags(result);
+
+	// Write the value to the correct location (either accumulator or into memory
+	if (mode == AddressingMode::Accumulator) {
+		this->register_a = result;
+	} else {
+		memory_write(operand_address, result);
+	}
+
+}
+
+void CPU::SEC() {
+	update_flag(Flag::Carry, Mode::Set);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
@@ -342,11 +455,11 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 	uint16_t operand_adress = get_operand_address(mode);
 	uint8_t operand = memory_read(operand_adress);
 
-	if ((operand & 0b10000000) != 0) { 
+	if ((operand & 0b10000000) == 0) { 
 		// If this is not 0, then 1 should be added to the carry
-		update_flag(Flag::Carry, Mode::Set);
-	} else {
 		update_flag(Flag::Carry, Mode::Clear);
+	} else {
+		update_flag(Flag::Carry, Mode::Set);
 	}
 
 	uint8_t result = operand << 1;
@@ -354,6 +467,8 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 	if (mode == AddressingMode::Accumulator) {
 		// store in the accumulator if addressing mode is Accumulator
 		this->register_a = result;
+	} else {
+		memory_write(operand_adress, result);
 	}
 
 	update_zero_and_negative_flags(result);
@@ -361,13 +476,6 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 	return result;
 }
 
-void CPU::LDA(const AddressingMode mode) {
-	const uint16_t operand_address = get_operand_address(mode);
-	const uint8_t operand = this->memory_read(operand_address);
-
-	this->register_a = operand;
-	update_zero_and_negative_flags(this->register_a);
-}
 
 void CPU::TAX() {
 	this->register_irx = this->register_a;
@@ -382,7 +490,7 @@ void CPU::TAY() {
 uint16_t CPU::branch() {
 	// [TODO]: refactor this to get jump address using the memory read API and adressing mode
 	// Read the label for the jump to be made and jump to the address
-	uint8_t jmp = this->memory_read(this->program_counter);
+	uint8_t jmp = memory_read(this->program_counter);
 	uint16_t jmp_addr = this->program_counter + 1 + jmp;
 
 	// Update the program counter

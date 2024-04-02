@@ -217,17 +217,53 @@ class CPU {
 		//@description INcrement Y register, increment the memory located at specified address, setting Z and N flags
 		void INY();
 
-		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
-		//@param const AddressingMode mode, addressing mode to be used
-		void LDA(const AddressingMode mode);
-
 		//@description JuMP, sets the program counter to the address specified
 		//@param `const AddressingMode mode`, addressing mode to be used
 		void JMP(const AddressingMode mode);
 
+		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
+		//@param const AddressingMode mode, addressing mode to be used
+		void LDA(const AddressingMode mode);
+
+		//@description LoaD X register, loads a byte of memory into the x register, setting the Z and N flags
+		//@param const AddressingMode mode, addressing mode to be used
+		void LDX(const AddressingMode mode);
+
+		//@description LoaD Y register, loads a byte of memory into the y register, setting the Z and N flags
+		//@param const AddressingMode mode, addressing mode to be used
+		void LDY(const AddressingMode mode);
+
+		//@description Logical Shift Right, each bit in A or M is shifted one place to the right. bit 0 gets shifted into the
+		//	carry. Bit 7 is set to 0. Updates Z and N Flags.
+		//@param const AddressingMode mode, addressing mode to be used
+		uint8_t LSR(const AddressingMode mode);
+
+		//@description logical inclusive OR Accumulator, bitwise OR operation on the Acummulator and some other operand
+		//	specified through addressingmode. Updates Z and N flags.
+		void ORA(const AddressingMode mode);
+
+		//@description ROtate Left, Move each bit in either the accumulator or in memory one bit to the left. The value from 
+		//	the carry bit gets set to bit 0 and the old bit 7 becomes the new carry flag. Difference between this and ASL is
+		//	is that ASL does not load in the carry value while this does.
+		// Flags: C, Z, N
+		void ROL(const AddressingMode mode);
+
+		//@description ROtate Right, Move each bit in either the accumulator or in memory one bit to the right. The value from 
+		//	the carry bit gets set to bit 7 and the old bit 0 becomes the new carry flag. Difference between this and LSR is
+		//	is that LSR does not load in the carry value while this does.
+		// Flags: C, Z, N
+		void ROR(const AddressingMode mode);
+
 		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
 		//	setting Z and N flags
 		void TAX();
+
+		//@description SuBtract with Carry, subtracts the content from a specified memory location from the accumulator together with
+		//	the negation of the carry bit. If overflow occurs the carry bit is clear, this enables multi-byte subtractions be done
+		void SBC(const AddressingMode mode);
+
+		//@description SEt Carry, sets the Carry flag to 1,
+		void SEC();
 		
 		//@description Transfer Accumulator to Y, copies current content of the accumulator into the Y register,
 		//	setting Z and N flags
