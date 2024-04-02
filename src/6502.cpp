@@ -497,6 +497,21 @@ void CPU::SEI() {
 	update_flag(Flag::InteruptDisable, Mode::Set);
 }
 
+void CPU::STA(const AddressingMode mode) {
+	const uint16_t address = get_operand_address(mode);
+	memory_write(address, this->register_a);
+}
+
+void CPU::STX(const AddressingMode mode) {
+	const uint16_t address = get_operand_address(mode);
+	memory_write(address, this->register_irx);
+}
+
+void CPU::STY(const AddressingMode mode) {
+	const uint16_t address = get_operand_address(mode);
+	memory_write(address, this->register_iry);
+}
+
 void CPU::TAX() {
 	this->register_irx = this->register_a;
 	update_zero_and_negative_flags(this->register_irx);

@@ -302,6 +302,15 @@ class CPU {
 		//@description SEt Interrupt disable flag, sets the interrupt disable flag to 1
 		void SEI();
 
+		//@description STore Accumulator, stores the content of the accumulator to a specified memory address
+		void STA(const AddressingMode mode);
+
+		//@description STore X register, stores the content of the x register to a specified memory address
+		void STX(const AddressingMode mode);
+
+		//@description STore Accumulator, stores the content of the y register to a specified memory address
+		void STY(const AddressingMode mode);
+
 		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
 		//	setting Z and N flags
 		void TAX();
