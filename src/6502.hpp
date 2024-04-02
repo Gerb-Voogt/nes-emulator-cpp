@@ -160,9 +160,13 @@ class CPU {
 		//@param uint8_t value, the value to push onto the stack
 		void push_stack(const uint8_t value);
 
+		void push_stack_uint16(const uint16_t value);
+
 		//@description Pull a value from the stack, stack pointer is updated to point towards the new top of the stack
 		//@return uint8_t data, the data the stack pointer in pointing to
-		uint8_t pull_stack();
+		uint8_t pop_stack();
+
+		uint16_t pop_stack_uint16();
 
 		// +--------------------------------------------+
 		// | Program Execution and Instruction Handling |
