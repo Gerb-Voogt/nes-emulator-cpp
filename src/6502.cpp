@@ -489,6 +489,14 @@ void CPU::SEC() {
 	update_flag(Flag::Carry, Mode::Set);
 }
 
+void CPU::SED() {
+	update_flag(Flag::DecimalMode, Mode::Set);
+}
+
+void CPU::SEI() {
+	update_flag(Flag::InteruptDisable, Mode::Set);
+}
+
 void CPU::TAX() {
 	this->register_irx = this->register_a;
 	update_zero_and_negative_flags(this->register_irx);

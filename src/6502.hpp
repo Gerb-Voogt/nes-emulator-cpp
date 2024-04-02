@@ -296,6 +296,12 @@ class CPU {
 		//@description SEt Carry, sets the Carry flag to 1,
 		void SEC();
 		
+		//@description SEt Decimal flag, sets the decimal flag to 1
+		void SED();
+
+		//@description SEt Interrupt disable flag, sets the interrupt disable flag to 1
+		void SEI();
+
 		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
 		//	setting Z and N flags
 		void TAX();
