@@ -1,3 +1,5 @@
+// [TODO]: Fix the order of the Opcdes in this file to be alphabetical
+//	like the declaration order in 6502.hpp
 #include <bitset>
 #include <cstdint>
 #include <stdexcept>
@@ -27,8 +29,8 @@ uint8_t CPU::memory_read(const uint16_t addr) const {
 uint16_t CPU::memory_read_uint16(const uint16_t addr) const {
 	// 8 bit values read into 16 bit variables such that the left most
 	// byte for both is padded with zeros
-	uint16_t lo_byte = this->memory_read(addr);
-	uint16_t hi_byte = this->memory_read(addr+1);
+	uint16_t lo_byte = memory_read(addr);
+	uint16_t hi_byte = memory_read(addr+1);
 
 	// Left shift hi_byte by 8 such that it is the left-most byte sequence
 	// This is to correct for the fact that the 6502 CPU of the NES is little endian
@@ -80,7 +82,7 @@ void CPU::reset() {
 	this->status = 0;
 
 	uint16_t first_instruction = 0xFFFC;
-	this->program_counter = this->memory_read_uint16(first_instruction);
+	this->program_counter = memory_read_uint16(first_instruction);
 }
 
 void CPU::execute_instruction(const uint8_t opcode) {
@@ -170,7 +172,7 @@ int CPU::interpret(std::vector<uint8_t> program) {
 
 void CPU::run() {
 	while (true) {
-		uint8_t opcode = this->memory_read(program_counter);
+		uint8_t opcode = memory_read(program_counter);
 		this->program_counter += 1;
 		this->execute_instruction(opcode);
 	}
@@ -206,8 +208,8 @@ void CPU::BEQ() {
 }
 
 void CPU::BIT(const uint8_t bitmask, const AddressingMode mode) {
-	uint16_t operand_address = get_operand_address(mode);
-	uint8_t operand = this->memory_read(operand_address);
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
 
 	// Take the logical AND 
 	const uint8_t result = (operand & bitmask);
@@ -256,10 +258,8 @@ void CPU::BVS() {
 // Look into getting this to work
 void CPU::BRK() {
 	// Push program counter and processor status onto the stack
-
-
 	uint16_t interrupt_vector = 0xFFFE;
-	this->program_counter = this->memory_read(interrupt_vector);
+	this->program_counter = memory_read(interrupt_vector);
 	// Set the break flag to 1
 	this->status = this->status | Flag::Break;
 }
@@ -387,7 +387,7 @@ uint16_t CPU::branch() {
 
 void CPU::compare(const uint8_t reg, const AddressingMode mode) {
 	uint16_t operand_address = this->get_operand_address(mode);
-	uint8_t operand = this->memory_read(operand_address);
+	uint8_t operand = memory_read(operand_address);
 
 	if (operand == reg) {
 		update_flag(Flag::Zero, Mode::Set);
@@ -475,7 +475,7 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			return this->program_counter + 0x8000;
 		}
 		case AddressingMode::Relative: {
-			uint8_t jmp = this->memory_read(this->program_counter);
+			uint8_t jmp = memory_read(this->program_counter);
 			uint16_t jmp_addr = this->program_counter + 1 + jmp;
 			return jmp_addr;
 		}
@@ -487,47 +487,47 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 		}
 		// C++ does wrapping addition by default on uint8 and uint16 types
 		case AddressingMode::ZeroPageX: {
-			const uint8_t pos = this->memory_read(this->program_counter);
+			const uint8_t pos = memory_read(this->program_counter);
 			const uint16_t addr = (uint16_t)(pos + register_irx); 
 			return addr;
 		}
 		case AddressingMode::ZeroPageY: {
-			const uint8_t pos = this->memory_read(this->program_counter);
+			const uint8_t pos = memory_read(this->program_counter);
 			const uint16_t addr = (uint16_t)(pos + register_iry);
 			return addr;
 		}
 		case AddressingMode::Absolute: {
-			return this->memory_read_uint16(this->program_counter); // Read the address
+			return memory_read_uint16(this->program_counter); // Read the address
 		}
 		case AddressingMode::AbsoluteX: {
-			uint16_t base = this->memory_read_uint16(this->program_counter);
+			uint16_t base = memory_read_uint16(this->program_counter);
 			uint16_t addr = base + this->register_irx;
 			return addr;
 		}
 		case AddressingMode::AbsoluteY: {
-			uint16_t base = this->memory_read_uint16(this->program_counter);
+			uint16_t base = memory_read_uint16(this->program_counter);
 			uint16_t addr = base + this->register_iry;
 			return addr;
 		}
 		case AddressingMode::Indirect: {
-			uint16_t ptr = this->memory_read_uint16(this->program_counter); // Read the address
-			return this->memory_read_uint16(ptr); // read the data at the ptr location
+			uint16_t ptr = memory_read_uint16(this->program_counter); // Read the address
+			return memory_read_uint16(ptr); // read the data at the ptr location
 		}
 		case AddressingMode::IndirectX: {
-			uint8_t base = this->memory_read(this->program_counter);
+			uint8_t base = memory_read(this->program_counter);
 			uint8_t ptr = base + this->register_irx;
 
-			uint16_t lo_byte = this->memory_read(ptr);
-			uint16_t hi_byte = this->memory_read(ptr+1);
+			uint16_t lo_byte = memory_read(ptr);
+			uint16_t hi_byte = memory_read(ptr+1);
 
 			return (hi_byte << 8) | lo_byte;
 		}
 		case AddressingMode::IndirectY: {
-			uint8_t base = this->memory_read(this->program_counter);
+			uint8_t base = memory_read(this->program_counter);
 			uint8_t ptr = base + this->register_iry;
 
-			uint16_t lo_byte = this->memory_read(ptr);
-			uint16_t hi_byte = this->memory_read(ptr+1);
+			uint16_t lo_byte = memory_read(ptr);
+			uint16_t hi_byte = memory_read(ptr+1);
 
 			return (hi_byte << 8) | lo_byte;
 		}
