@@ -319,6 +319,15 @@ class CPU {
 		//	setting Z and N flags
 		void TAY();
 
+		//@description Transfer Stack pointer to X, copies the current content of the stack register to the X register setting Z and N flags.
+		void TSX();
+
+		//@description Transfer Stack pointer to Accumulator, copies the current content of the stack register to the accumulator register setting Z and N flags.
+		void TSA();
+
+		//@description Transfer X to Stack pointer, copies current content of the X-register to the stack pointer
+		void TXS();
+
 		//@description Transfer Y to Accumulator, copies current content of the Y-register to the Accumulator 
 		void TYA();
 

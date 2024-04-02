@@ -522,6 +522,18 @@ void CPU::TAY() {
 	update_zero_and_negative_flags(this->register_iry);
 }
 
+void CPU::TSX() {
+	// [TODO]
+}
+
+void CPU::TSA() {
+	// [TODO]
+}
+
+void CPU::TXS() {
+	// [TODO]
+}
+
 void CPU::TYA() {
 	this->register_a = this->register_iry;
 }
