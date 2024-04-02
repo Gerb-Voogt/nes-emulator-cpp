@@ -169,6 +169,9 @@ class CPU {
 		//@description CLear Carry, sets the Carry flag to 0
 		void CLC();
 
+		//@description CLear Decimal, sets the decimal flag to 0
+		void CLD();
+
 		//@description Force Interrupt, forces the generation of an interupt request. Program counter and processor status
 		//	are pushed to the stack, then the IRQ interrupt vector at $FFFE/F is loaded into the PC and the break flag
 		//	is set to 1

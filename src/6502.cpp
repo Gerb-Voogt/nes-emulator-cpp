@@ -259,6 +259,10 @@ void CPU::CLC() {
 	update_flag(Flag::Carry, Mode::Clear);
 }
 
+void CPU::CLD() {
+	update_flag(Flag::DecimalMode, Mode::Clear);
+}
+
 // Look into getting this to work
 void CPU::BRK() {
 	// Push program counter and processor status onto the stack
