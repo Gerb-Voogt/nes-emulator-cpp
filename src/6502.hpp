@@ -265,6 +265,10 @@ class CPU {
 		//@description SEt Carry, sets the Carry flag to 1,
 		void SEC();
 		
+		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
+		//	setting Z and N flags
+		void TAX();
+
 		//@description Transfer Accumulator to Y, copies current content of the accumulator into the Y register,
 		//	setting Z and N flags
 		void TAY();

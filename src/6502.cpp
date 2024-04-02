@@ -363,6 +363,7 @@ uint8_t CPU::LSR(const AddressingMode mode) {
 		this->register_a = result;
 	} else {
 		memory_write(operand_address, result);
+	}
 	update_zero_and_negative_flags(result);
 
 	return result;
@@ -442,6 +443,16 @@ void CPU::SEC() {
 	update_flag(Flag::Carry, Mode::Set);
 }
 
+void CPU::TAX() {
+	this->register_irx = this->register_a;
+	update_zero_and_negative_flags(this->register_irx);
+}
+
+void CPU::TAY() {
+	this->register_iry = this->register_a;
+	update_zero_and_negative_flags(this->register_iry);
+}
+
 void CPU::AND(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
@@ -477,15 +488,6 @@ uint8_t CPU::ASL(const AddressingMode mode) {
 }
 
 
-void CPU::TAX() {
-	this->register_irx = this->register_a;
-	update_zero_and_negative_flags(this->register_irx);
-}
-
-void CPU::TAY() {
-	this->register_iry = this->register_a;
-	update_zero_and_negative_flags(this->register_iry);
-}
 
 uint16_t CPU::branch() {
 	// [TODO]: refactor this to get jump address using the memory read API and adressing mode
