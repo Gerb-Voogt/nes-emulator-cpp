@@ -395,6 +395,22 @@ void CPU::ORA(const AddressingMode mode) {
 	update_zero_and_negative_flags(this->register_a);
 }
 
+void CPU::PHA() {
+	// [TODO]
+}
+
+void CPU::PHP() {
+	// [TODO]
+}
+
+void CPU::PLA() {
+	// [TODO]
+}
+
+void CPU::PLP() {
+	// [TODO]
+}
+
 void CPU::ROL(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
@@ -455,6 +471,18 @@ void CPU::ROR(const AddressingMode mode) {
 		memory_write(operand_address, result);
 	}
 
+}
+
+void CPU::RTI() {
+	// [TODO]
+}
+
+void CPU::RTS() {
+	// [TODO]
+}
+
+void CPU::SBC(const AddressingMode mode) {
+	// [TODO]
 }
 
 void CPU::SEC() {

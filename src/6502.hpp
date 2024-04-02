@@ -227,6 +227,11 @@ class CPU {
 		//@param `const AddressingMode mode`, addressing mode to be used
 		void JMP(const AddressingMode mode);
 
+		//@description Jump to SubRoutine, pushes the address minus one of the return point on the stack and then
+		// sets the program counter to the target memory address
+		// [TODO]
+		void JSR();
+
 		//@description Load Accumulator, loads a byte of memory into the accumulator, setting the Z and N flags
 		//@param const AddressingMode mode, addressing mode to be used
 		void LDA(const AddressingMode mode);
@@ -248,6 +253,22 @@ class CPU {
 		//	specified through addressingmode. Updates Z and N flags.
 		void ORA(const AddressingMode mode);
 
+		//@description PusH Accumulator, pushes a copy of the accumulator onto the stack
+		// [TODO]
+		void PHA();
+
+		//@description PusH Processor status, pushes a copy of the status flags onto the stack
+		// [TODO]
+		void PHP();
+
+		//@description PulL Accumulator, pulls an 8-bit value from the stack onto the accumulator
+		// [TODO]
+		void PLA();
+
+		//@description PulL Processor status, pull status flags from the stack
+		// [TODO]
+		void PLP();
+
 		//@description ROtate Left, Move each bit in either the accumulator or in memory one bit to the left. The value from 
 		//	the carry bit gets set to bit 0 and the old bit 7 becomes the new carry flag. Difference between this and ASL is
 		//	is that ASL does not load in the carry value while this does.
@@ -260,9 +281,13 @@ class CPU {
 		// Flags: C, Z, N
 		void ROR(const AddressingMode mode);
 
-		//@description Transfer Accumulator to X, copies current content of the accumulator into the X register,
-		//	setting Z and N flags
-		void TAX();
+		//@description ReTurn from Interrupt, pulls processor status and program counter from the stack
+		// [TODO]
+		void RTI();
+
+		//@description ReTurn from Subroutine, pulls the program counter - 1 from the stack
+		// [TODO]
+		void RTS();
 
 		//@description SuBtract with Carry, subtracts the content from a specified memory location from the accumulator together with
 		//	the negation of the carry bit. If overflow occurs the carry bit is clear, this enables multi-byte subtractions be done
