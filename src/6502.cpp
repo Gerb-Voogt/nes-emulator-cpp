@@ -13,7 +13,7 @@ CPU::CPU() {
 	register_irx = 0;
 	register_iry = 0;
 	program_counter = 0;
-	stack_pointer = 0x01FF;
+	stack_pointer = 0xFF;
 	status = 0;
 
 	// Initialize memory space to 0

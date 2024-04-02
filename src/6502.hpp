@@ -43,7 +43,7 @@ enum Mode {
 class CPU {
 	public:
 		uint16_t program_counter;
-		uint16_t stack_pointer;
+		uint8_t stack_pointer;
 		uint8_t register_a;
 		uint8_t register_irx;
 		uint8_t register_iry;
