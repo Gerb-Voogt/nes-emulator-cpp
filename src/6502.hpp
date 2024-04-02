@@ -3,7 +3,9 @@
 #include <cstdint>
 #include <vector>
 
-// Enums for code readability
+/**
+ * AddressingMode enum for code readability
+ */
 enum AddressingMode {
 	Immediate,
 	Relative,
@@ -19,6 +21,9 @@ enum AddressingMode {
 	IndirectY,
 };
 
+/**
+ * Flag enum for easily accessing and updating specific status register flags
+ */
 enum Flag {
 	Carry = 0b0000001,
 	Zero = 0b00000010,
@@ -29,17 +34,49 @@ enum Flag {
 	Negative = 0b10000000,
 };
 
-// Mode enum for specifying what to do when updating the status register
-// Set - Set a specific flag
-// Clear - Clear a specific flag
-// Update - Negate a specific flag
+/**
+ * Mode enum for Setting and Clearing status flags
+ */
 enum Mode {
 	Set,
 	Clear,
 	Update,
 };
 
-// CPU class containing CPU state and all OPCODE subroutines
+/**
+ * 6502 CPU Emulator containing GP registers, a status registers, memory space, a program counter and a stack pointer.
+ *
+ * The general purpose registers consist of the accumulator (`register_a`), the x register (`register_irx`) and the y
+ * register (`register_iry`). Registers can be used for any purpose, with x and y commonly being used for loop-counters
+ * as well as setting memory offsets.
+ *
+ * The program counter stores the offset for the next instruction, the stack pointer points to the next empty address on
+ * the stack.
+ *
+ * ---
+ *
+ * The status register is used to for storing any flags that may be set by the program. These flags include the following:
+ *
+ *	- `0b10000000` Negative (N)
+ *	- `0b01000000` Overflow (V)
+ *	- `0b00100000` Unused
+ *	- `0b00010000` Break (B)
+ *	- `0b00001000` DecimalMode (D)
+ *	- `0b00000100` InteruptDisable (I)
+ *	- `0b00000010` Zero (Z)
+ *	- `0b00000001` Carry (C)
+ *
+ * ---
+ *
+ *  TODO: Add more relevant values to the CPU memory map, including mirrors, PPU registers and APU registers
+ *
+ *  The memory is represented as a stack allocated array with `0xFFFF` elements. The following ranges are of special note:
+ *
+ *	- `0x0000` - `0x0100` (256 B), The Zero-Page
+ *	- `0x0100` - `0x01FF` (256 B), The stack
+ *	- `0x6000` - `0x7FFF` (4 kB), Cartridge RAM (when present)
+ *	- `0x8000` - `0xFFFF` (16 kB), The cartridge ROM and mapper registers
+ */
 class CPU {
 	public:
 		uint16_t program_counter;
@@ -52,35 +89,62 @@ class CPU {
 		// This might give a warning for some compilers as a large amount of data 
 		// is allocated on the stack. First 256 bytes (0x0100) reserved as the zero page
 		// Which has faster access times.
-		uint8_t memory[0xFFFF]; // Memory space, [0x8000...0xFFFF] reserved for Program ROM
+		uint8_t memory[0xFFFF];
 
-		//@description default Constructor Initializes all CPU registers to 0
+		/**
+		 * Default constructor, initialize the PC, SP, registers, status register and memory space to all zeros
+		 */
 		CPU();
 	
-		// +--------------------------------------------------+
-		// | Generic memory interface for reading and writing |
-		// +--------------------------------------------------+
-	
-		//@description Read memory from address
-		//@param uint16_t addr, the address to read
+		/**
+		 * Read memory from a specified address.
+		 *
+		 * The address is passed as a `uint16_t` and is directly read from the `CPU.memory` array.
+		 * ---
+		 * @param `const uint16_t addr`, the address to be read.
+		 * ---
+		 * @return `uint8_t result`, the value stored in memory at `addr`
+		 * ---
+		 */
 		uint8_t memory_read(const uint16_t addr) const;
 
-		//@description Read 2 bytes of memory from address. Apply conversion as the NES CPU uses little endian addressing
-		//@param uint16_t addr, the address to read
+		/**
+		 * Read 2 bytes of memory from the specified address. Applies conversion to the endianness as 
+		 * the 6502 is little endian while `C++` assumes a big endian representation.
+		 * ---
+		 * @param `const uint16_t addr`, the address to be read.
+		 * ---
+		 * @return `uint16_t result`, the value stored in memory at `addr` with the low byte at `addr`, and the high byte at `addr+1`
+		 * ---
+		 */
 		uint16_t memory_read_uint16(const uint16_t addr) const;
 
-		//@description Write memory to address
-		//@param uint16_t addr, the address to write
-		//@param uint8_t data, the data to write to the address
+		/**
+		 * Write a byte to the specified address.
+		 * ---
+		 * @param `const uint16_t addr`, the address to write to
+		 * @param `const uint8_t data`, the data to be written to this address
+		 * ---
+		 */
 		void memory_write(const uint16_t addr, const uint8_t data);
 
-		//@description Write 2 bytes of memory to the address. Apply conversion as the NES CPU uses little endian addressing
-		//@param uint16_t addr, the address to write
-		//@param uint16_t data, the data to write to the address
+		/**
+		 * Write 2 bytes of memory to the specified address. Applies conversion to the endianess as the 6502
+		 * is little endian while `C++` assumes big endian representation.
+		 * ---
+		 * @param `const uint16_t addr`, the address to write to
+		 * @param `const uint16_t data`, the 2 bytes of data to be written to this address
+		 * ---
+		 */
 		void memory_write_uint16(const uint16_t addr, const uint16_t data);
 
-		//@description load a program into memory space
-		//@param std::vec<uint8_t> program, vector containing the program instructions
+		/**
+		 * Load a program to the memory space reserved to cartridge ROM. The program gets written to the range
+		 * `0x8000` - `0xFFFF` of the `CPU.memory` array.
+		 * ---
+		 * @param `const std::vector<uint8_t> program`, the vector containing the ordered list of instructions of the program
+		 * ---
+		 */
 		void load_program(const std::vector<uint8_t> program);
 
 		//@description load a program into memory space, reset the registeres and run it
