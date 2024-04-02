@@ -263,6 +263,10 @@ void CPU::CLD() {
 	update_flag(Flag::DecimalMode, Mode::Clear);
 }
 
+void CPU::CLI() {
+	update_flag(Flag::InteruptDisable, Mode::Clear);
+}
+
 // Look into getting this to work
 void CPU::BRK() {
 	// Push program counter and processor status onto the stack
@@ -331,6 +335,16 @@ void CPU::INY() {
 void CPU::JMP(const AddressingMode mode) {
 	const uint16_t address = get_operand_address(mode);
 	this->program_counter = address;
+}
+
+void CPU::JSR() { } // [TODO]
+
+void CPU::LDA(const AddressingMode mode) {
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+
+	this->register_a = operand;
+	update_zero_and_negative_flags(this->register_a);
 }
 
 void CPU::LDX(const AddressingMode mode) {

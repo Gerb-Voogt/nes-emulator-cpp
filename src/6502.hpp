@@ -172,6 +172,9 @@ class CPU {
 		//@description CLear Decimal, sets the decimal flag to 0
 		void CLD();
 
+		//@description CLear Interrupt disable, sets the intterupt disable flag to 0
+		void CLI();
+
 		//@description Force Interrupt, forces the generation of an interupt request. Program counter and processor status
 		//	are pushed to the stack, then the IRQ interrupt vector at $FFFE/F is loaded into the PC and the break flag
 		//	is set to 1
