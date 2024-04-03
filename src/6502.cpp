@@ -88,68 +88,62 @@ void CPU::reset() {
 void CPU::execute_instruction(const uint8_t opcode) {
 	// [TODO]: Wrap the instruction in an enum for better matching
 	switch (opcode) {
-		// brk instruction, execution should be terminated
 		case 0x00: {
 			break;
 		}
-		// nop instruction
 		case 0xEA: {
 			this->NOP();
 			break;
 		}
-		// lda instructions
-		case 0xA9: { // immediate
+		case 0xA9: {
 			this->LDA(AddressingMode::Immediate);
 			this->program_counter += 1;
 			break;
 		}
-		case 0xA5: { // Zero Page
+		case 0xA5: {
 			this->LDA(AddressingMode::ZeroPage);
 			this->program_counter += 1;
 			break;
 		}
-		case 0xB5: { // Zero Page
+		case 0xB5: {
 			this->LDA(AddressingMode::ZeroPageX);
 			this->program_counter += 1;
 			break;
 		}
-		case 0xAD: { // Absolute
+		case 0xAD: {
 			this->LDA(AddressingMode::Absolute);
 			this->program_counter += 2;
 			break;
 		}
-		case 0xBD: { // AbsoluteX
+		case 0xBD: {
 			this->LDA(AddressingMode::AbsoluteX);
 			this->program_counter += 2;
 			break;
 		}
-		case 0xB9: { // AbsoluteY
+		case 0xB9: {
 			this->LDA(AddressingMode::AbsoluteY);
 			this->program_counter += 2;
 			break;
 		}
-		case 0xA1: { // Indirect X
+		case 0xA1: {
 			this->LDA(AddressingMode::IndirectX);
 			this->program_counter += 1;
 			break;
 		}
-		case 0xB1: { // Indirect Y
+		case 0xB1: {
 			this->LDA(AddressingMode::IndirectY);
 			this->program_counter += 1;
 			break;
 		}
-		// tax
-		case 0xAA: {  // implied
+		case 0xAA: {
 			this->TAX();
 			break;
 		}
-		// inx
-		case 0xE9: { // implied
+		case 0xE9: {
 			this->INX();
 			break;
 		}
-		// iny
-		case 0xC8: { // implied
+		case 0xC8: {
 			this->INY();
 			break;
 		}
@@ -171,6 +165,8 @@ int CPU::interpret(std::vector<uint8_t> program) {
 }
 
 void CPU::run() {
+	// TODO: Fix this implementation. There might be something weird going on here with the program counter
+	// counting down from `0xFFFF` rather than up from `0x8000`.
 	while (true) {
 		uint8_t opcode = memory_read(program_counter);
 		this->program_counter += 1;

@@ -133,7 +133,7 @@ class CPU {
 		 * is little endian while `C++` assumes big endian representation.
 		 * ---
 		 * @param `const uint16_t addr`, the address to write to
-		 * @param `const uint16_t data`, the 2 bytes of data to be written to this address
+		 * @param `const uint8_t data`, the byte of data to be written to this address
 		 * ---
 		 */
 		void memory_write_uint16(const uint16_t addr, const uint16_t data);
@@ -143,50 +143,97 @@ class CPU {
 		 * `0x8000` - `0xFFFF` of the `CPU.memory` array.
 		 * ---
 		 * @param `const std::vector<uint8_t> program`, the vector containing the ordered list of instructions of the program
+		 * @param `const uint16_t data`, the 2 bytes of data to be written to this address
+		 * ---
+		 * @exception `std::out_of_range`, Throws out of range error in the case that the length of the vector exceeds what fits into the memory
+		 * @exception `std::out_of_range`, Thrown when zero length program is passed in
 		 * ---
 		 */
 		void load_program(const std::vector<uint8_t> program);
 
-		//@description load a program into memory space, reset the registeres and run it
-		//@param uint16_t addr, the address to write
-		//@param std::vec<uint8_t> program, vector containing the program instructions
+		/**
+		 * Load a program to the memory space reserved to cartridge ROM and immediately execute it. The program gets written 
+		 * to the range `0x8000` - `0xFFFF` of the `CPU.memory` array.
+		 * ---
+		 * @param `const std::vector<uint8_t> program`, the vector containing the ordered list of instructions of the program to be loaded into memory
+		 * ---
+		 */
 		void load_program_and_run(const std::vector<uint8_t> program);
 
-		// +-----------------+
-		// | Stack Interface |
-		// +-----------------+
-
-		//@description Push a value onto the stack, stack pointer is updated to point to the new top of the stack
-		//@param uint8_t value, the value to push onto the stack
+		/**
+		 * Pushes a value onto the stack. The data is placed at the location of the stack pointer which points to the next free location.
+		 * Note that this operation decrements the stack pointer by 1. The stack starts at `0x01FF` and grows downward towards
+		 * `0x0100`.
+		 *
+		 * TODO: Implement handling of stack over- and underflow exceptions. Not sure how this should be handled by the CPU, look into this
+		 * ---
+		 * @param `const uitn16_t value`, 1 byte value to write to the stack
+		 * ---
+		 */
 		void push_stack(const uint8_t value);
 
+		/**
+		 * Pushes a 2 bytes value onto the stack, using appropriate endian conversion. The data is placed at the location of the 
+		 * stack pointer and the stack pointer decremented by 1. which points to the next free location.
+		 * Note that this operation decrements the stack pointer by 2. The stack starts at `0x01FF` and grows downward towards
+		 * `0x0100`.
+		 *
+		 * TODO: Implement handling of stack over- and underflow exceptions. Not sure how this should be handled by the CPU, look into this
+		 * ---
+		 * @param `const uitn16_t value`, 2 byte value to write to the stack
+		 * ---
+		 */
 		void push_stack_uint16(const uint16_t value);
 
-		//@description Pull a value from the stack, stack pointer is updated to point towards the new top of the stack
-		//@return uint8_t data, the data the stack pointer in pointing to
+		/**
+		 * Pop a 1 byte value from the stack and return it. Stack pointer is updated to point to the new next item after the top
+		 * ---
+		 * @return `uint8_t top` the 1 byte value stored at the top of the stack (stack pointer - 1)
+		 * ---
+		 */
 		uint8_t pop_stack();
 
+		/**
+		 * Pop a 2 byte value from the stack and return it. Stack pointer is updated to point to the new next item after the top
+		 * ---
+		 * @return `uint16_t top` the 2 byte value stored at the top of the stack (stack pointer - 1)
+		 * ---
+		 */
 		uint16_t pop_stack_uint16();
 
-		// +--------------------------------------------+
-		// | Program Execution and Instruction Handling |
-		// +--------------------------------------------+
-
-		//@description Special subroutine that gets called when a cartridge is inserted
-		// resets the state (registers and flags all get set to 0) and sets the program counter
-		// to the address 0xFFFC
+		/**
+		 * A special subroutine that gets called when a cartridge is inserted (and hence when program gets loaded). Resets
+		 * the state of the CPU registers and sets the program counter to `0xFFFC`.
+		 * ---
+		 */
 		void reset();
 		
-		//@description execute a specific opcode
-		//@param uint8_t opcode, the opcode corresponding to the instruction to be executed
+		/**
+		 * Execute the OPCODE passed in.
+		 * ---
+		 *  @param `uint8_t opcode`, the numerical value corresponding to the opcode to be executed
+		 * ---
+		 */
 		void execute_instruction(const uint8_t opcode);
 
-		//@description Interpret a program (sequence of instructions). Cycle consists of fetching an instruction from the PC address, decoding this
-		//  instruction and executing this instruction, and repeat. Mainly useful as a debugging interface and for unit testing
-		//@param std::vector<uint8_t> Program, sequence of instructions
+		/**
+		 * Interpret a program being passed in as an argument, without loading it into memory. Cycle consists of fetching an instruction
+		 * from the address that the PC points to, decoding the instruction and executing it. This function is mainly
+		 * for debugging and testing
+		 * ---
+		 *  @param `uint8_t opcode`, the numerical value corresponding to the opcode to be executed
+		 * ---
+		 *  @return `int exit_code`, returns an exit code to signify whether the function ran succesfully (0) or not (-1).
+		 * ---
+		 */
 		int interpret(const std::vector<uint8_t> program);
 
-		//@description Run the CPU, executing whatever program is loaded into the memory space
+		/**
+		 * Run the CPU, executing whatever program is loaded into memory space `0x8000` - `0xFFFF`
+		 *
+		 * TODO: Implementation is currently not working as intented
+		 * ---
+		 */
 		void run();
 		
 		//@description Add with Carry, Adds content to accumulator together with the carry bit. Carry bit set if overflow occurs
