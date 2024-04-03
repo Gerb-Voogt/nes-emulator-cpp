@@ -15,6 +15,7 @@ CPU::CPU() {
 	program_counter = 0;
 	stack_pointer = 0xFF;
 	status = 0;
+	cycles = 0;
 
 	// Initialize memory space to 0
 	for (int i = 0; i < 0xFFFF; i++) {
@@ -145,6 +146,7 @@ void CPU::reset() {
 	this->register_irx = 0;
 	this->register_iry = 0;
 	this->status = 0;
+	this->cycles = 0;
 
 	uint16_t first_instruction = 0xFFFC;
 	this->program_counter = memory_read_uint16(first_instruction);
@@ -157,59 +159,59 @@ void CPU::execute_instruction(const uint8_t opcode) {
 			break;
 		}
 		case 0xEA: {
-			this->NOP();
+			NOP();
 			break;
 		}
 		case 0xA9: {
-			this->LDA(AddressingMode::Immediate);
+			LDA(AddressingMode::Immediate);
 			this->program_counter += 1;
 			break;
 		}
 		case 0xA5: {
-			this->LDA(AddressingMode::ZeroPage);
+			LDA(AddressingMode::ZeroPage);
 			this->program_counter += 1;
 			break;
 		}
 		case 0xB5: {
-			this->LDA(AddressingMode::ZeroPageX);
+			LDA(AddressingMode::ZeroPageX);
 			this->program_counter += 1;
 			break;
 		}
 		case 0xAD: {
-			this->LDA(AddressingMode::Absolute);
+			LDA(AddressingMode::Absolute);
 			this->program_counter += 2;
 			break;
 		}
 		case 0xBD: {
-			this->LDA(AddressingMode::AbsoluteX);
+			LDA(AddressingMode::AbsoluteX);
 			this->program_counter += 2;
 			break;
 		}
 		case 0xB9: {
-			this->LDA(AddressingMode::AbsoluteY);
+			LDA(AddressingMode::AbsoluteY);
 			this->program_counter += 2;
 			break;
 		}
 		case 0xA1: {
-			this->LDA(AddressingMode::IndirectX);
+			LDA(AddressingMode::IndirectX);
 			this->program_counter += 1;
 			break;
 		}
 		case 0xB1: {
-			this->LDA(AddressingMode::IndirectY);
+			LDA(AddressingMode::IndirectY);
 			this->program_counter += 1;
 			break;
 		}
 		case 0xAA: {
-			this->TAX();
+			TAX();
 			break;
 		}
 		case 0xE9: {
-			this->INX();
+			INX();
 			break;
 		}
 		case 0xC8: {
-			this->INY();
+			INY();
 			break;
 		}
 		default: {

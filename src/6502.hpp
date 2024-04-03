@@ -85,6 +85,7 @@ public:
     uint8_t register_irx;
     uint8_t register_iry;
     uint8_t status;
+    uint32_t cycles;
 
     // This might give a warning for some compilers as a large amount of data 
     // is allocated on the stack. First 256 bytes (0x0100) reserved as the zero page
