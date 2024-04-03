@@ -10,7 +10,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
-#include "6502.hpp"
+#include "../src/6502.hpp"
 
 void test_lda_immediate_load_state() {
 	// Test LDA immediate mode
