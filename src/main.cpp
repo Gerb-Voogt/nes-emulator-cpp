@@ -4,7 +4,7 @@
 #ifdef TEST
 #include <cstdint>
 #include <iostream>
-#include "test.hpp"
+#include "../test/test.hpp"
 
 void run_tests() {
 	std::cout << "lda tests:" << std::endl;
