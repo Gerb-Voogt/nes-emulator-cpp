@@ -170,7 +170,7 @@ public:
      * @param `const uitn16_t value`, 1 byte value to write to the stack
      * ---
      */
-    void push_stack(const uint8_t value);
+    void push_stack(const uint8_t data);
 
     /**
      * Pushes a 2 bytes value onto the stack, using appropriate endian conversion. The data is placed at the location of the 
@@ -183,7 +183,7 @@ public:
      * @param `const uitn16_t value`, 2 byte value to write to the stack
      * ---
      */
-    void push_stack_uint16(const uint16_t value);
+    void push_stack_uint16(const uint16_t data);
 
     /**
      * Pop a 1 byte value from the stack and return it. Stack pointer is updated to point to the new next item after the top

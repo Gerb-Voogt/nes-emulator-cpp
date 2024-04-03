@@ -47,8 +47,73 @@ void CPU::memory_write_uint16(const uint16_t addr, const uint16_t data) {
 
 	// lo byte (lower half byte of data) should be written to addr
 	// hi byte (upper half byte of data) should be written to addr + 1
-	this->memory_write(addr, lo_byte);
-	this->memory_write(addr+1, hi_byte);
+	memory_write(addr, lo_byte);
+	memory_write(addr+1, hi_byte);
+}
+
+void CPU::push_stack(const uint8_t data) {
+	if (this->stack_pointer == 0x00) {
+		// Wrap the stack pointer if overflow happens
+		this->stack_pointer = 0xFF;
+	}
+
+	// Get the address and put on the stack
+	uint16_t address = 0x0100 + this->stack_pointer;
+	memory_write(address, data);
+
+	// Move the stack pointer to the new empty address
+	this->stack_pointer -= 1;
+}
+
+void CPU::push_stack_uint16(const uint16_t data) {
+	uint16_t address_lo_byte = 0x0100 + this->stack_pointer;
+	uint16_t address_hi_byte = 0x0100 + this->stack_pointer - 1;
+
+	// Convert data and write to memory
+	// hi byte should be written to stack_pointer-1, lo byte to stack_pointer
+	uint8_t hi_byte = (data << 8);
+	uint8_t lo_byte = (data & 0b11111111);
+	memory_write(address_lo_byte, lo_byte);
+	memory_write(address_hi_byte, hi_byte);
+
+	// Move the stack pointer to the new empty address
+	this->stack_pointer -= 2;
+}
+
+uint8_t CPU::pop_stack() {
+	if (this->stack_pointer == 0xFF) {
+		// Wrap the stack pointer if underflow occurs
+		this->stack_pointer = 0x00;
+	}
+	// Get the top item of the stack
+	uint16_t address = 0x0100 + this->stack_pointer + 1;
+
+	uint8_t data = memory_read(address);
+	memory_write(address, 0); // Clear the memory
+	this->stack_pointer = address;
+	
+	return data;
+}
+
+uint16_t CPU::pop_stack_uint16() {
+	// Wrap the stack pointer if underflow occurs
+	if (this->stack_pointer == 0xFF)  {
+		this->stack_pointer = 0x01;
+	} else if (this->stack_pointer == 0xFE) {
+		this->stack_pointer = 0x00;
+	}
+	uint16_t address_hi_byte = 0x0100 + this->stack_pointer - 1;
+	uint16_t address_lo_byte = 0x0100 + this->stack_pointer - 2;
+
+	uint16_t hi_byte = memory_read(address_hi_byte) << 8;
+	uint16_t lo_byte = memory_read(address_lo_byte);
+	// Clear the memory
+	memory_write(address_hi_byte, 0);
+	memory_write(address_lo_byte, 0);
+
+	this->stack_pointer = address_lo_byte;
+
+	return hi_byte | lo_byte;
 }
 
 void CPU::load_program(const std::vector<uint8_t> program) {
