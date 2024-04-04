@@ -636,6 +636,12 @@ public:
     void TSX();
 
     /**
+     * Transfer X register to Accumulator, setting zero and negative flags
+     * ---
+     */
+    void TXA();
+
+    /**
      * Transfer Stack pointer to Accumulator register, setting zero and negative flags
      * ---
      */

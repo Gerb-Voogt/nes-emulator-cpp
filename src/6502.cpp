@@ -594,6 +594,11 @@ void CPU::TSX() {
 	// [TODO]
 }
 
+void CPU::TXA() {
+	this->register_a = this->register_irx;
+	update_zero_and_negative_flags(this->register_a);
+}
+
 void CPU::TSA() {
 	// [TODO]
 }
