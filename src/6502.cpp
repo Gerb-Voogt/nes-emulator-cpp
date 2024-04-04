@@ -155,63 +155,794 @@ void CPU::reset() {
 void CPU::execute_instruction(const uint8_t opcode) {
 	// [TODO]: Wrap the instruction in an enum for better matching
 	switch (opcode) {
+		case 0x69: {
+			ADC(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0x65: {
+			ADC(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x75: {
+			ADC(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x6D: {
+			ADC(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x7D: {
+			ADC(AddressingMode::AbsoluteX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x79: {
+			ADC(AddressingMode::AbsoluteY);
+			this->cycles += 4;
+			break;
+		}
+		case 0x61: {
+			ADC(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x71: {
+			ADC(AddressingMode::IndirectY);
+			this->cycles += 5;
+			break;
+		}
+		case 0x29: {
+			AND(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0x25: {
+			AND(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x35: {
+			AND(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x2D: {
+			AND(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x3D: {
+			AND(AddressingMode::AbsoluteX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x39: {
+			AND(AddressingMode::AbsoluteY);
+			this->cycles += 4;
+			break;
+		}
+		case 0x21: {
+			AND(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x31: {
+			AND(AddressingMode::IndirectY);
+			this->cycles += 5;
+			break;
+		}
+		// ASL
+		case 0x0A: {
+			ASL(AddressingMode::Accumulator);
+			this->cycles += 2;
+			break;
+		}
+		case 0x06: {
+			ASL(AddressingMode::ZeroPage);
+			this->cycles += 5;
+			break;
+		}
+		case 0x16: {
+			ASL(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x0E: {
+			ASL(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0x1E: {
+			ASL(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0x90: {
+			BCC();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
+		case 0xB0: {
+			BCS();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
+		case 0xF0: {
+			BEQ();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
+		case 0x24: {
+			BIT(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x2C: {
+			BIT(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x30: {
+			BIT(AddressingMode::Relative);
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
+		case 0xD0: {
+			BNE();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
+		case 0x10: {
+			BPL();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
+			break;
+		}
 		case 0x00: {
+			BRK();
+			this->cycles += 7;
 			break;
 		}
-		case 0xEA: {
-			NOP();
+		case 0x50: {
+			BRK();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
 			break;
 		}
-		case 0xA9: {
-			LDA(AddressingMode::Immediate);
-			this->program_counter += 1;
+		case 0x70: {
+			BVS();
+			// Cycles should be +1 if the branch succeeds
+			// and +2 if it is to a new page
+			this->cycles += 2;
 			break;
 		}
-		case 0xA5: {
-			LDA(AddressingMode::ZeroPage);
-			this->program_counter += 1;
+		case 0x18: {
+			CLC();
+			this->cycles += 2;
 			break;
 		}
-		case 0xB5: {
-			LDA(AddressingMode::ZeroPageX);
-			this->program_counter += 1;
+		case 0xD8: {
+			CLD();
+			this->cycles += 2;
 			break;
 		}
-		case 0xAD: {
-			LDA(AddressingMode::Absolute);
-			this->program_counter += 2;
+		case 0x58: {
+			CLI();
+			this->cycles += 2;
 			break;
 		}
-		case 0xBD: {
-			LDA(AddressingMode::AbsoluteX);
-			this->program_counter += 2;
+		case 0xB8: {
+			CLV();
+			this->cycles += 2;
 			break;
 		}
-		case 0xB9: {
-			LDA(AddressingMode::AbsoluteY);
-			this->program_counter += 2;
+		case 0xC9: {
+			CMP(AddressingMode::Immediate);
+			this->cycles += 2;
 			break;
 		}
-		case 0xA1: {
-			LDA(AddressingMode::IndirectX);
-			this->program_counter += 1;
+		case 0xC5: {
+			CMP(AddressingMode::ZeroPage);
+			this->cycles += 3;
 			break;
 		}
-		case 0xB1: {
-			LDA(AddressingMode::IndirectY);
-			this->program_counter += 1;
+		case 0xD5: {
+			CMP(AddressingMode::ZeroPageX);
+			this->cycles += 4;
 			break;
 		}
-		case 0xAA: {
-			TAX();
+		case 0xCD: {
+			CMP(AddressingMode::Absolute);
+			this->cycles += 4;
 			break;
 		}
-		case 0xE9: {
+		case 0xDD: {
+			CMP(AddressingMode::AbsoluteX);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0xD9: {
+			CMP(AddressingMode::AbsoluteY);
+			// +1 if page crossed
+			this->cycles += 2;
+			break;
+		}
+		case 0xC1: {
+			CMP(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0xD1: {
+			CMP(AddressingMode::IndirectY);
+			// +1 if page crossed
+			this->cycles += 2;
+			break;
+		}
+		case 0xE0: {
+			CPX(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xE4: {
+			CPX(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0xEC: {
+			CPX(AddressingMode::AbsoluteX);
+			this->cycles += 4;
+			break;
+		}
+		case 0xC0: {
+			CPY(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xC4: {
+			CPY(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0xCC: {
+			CPY(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xC6: {
+			DEC(AddressingMode::ZeroPage);
+			this->cycles += 5;
+			break;
+		}
+		case 0xD6: {
+			DEC(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0xCE: {
+			DEC(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0xDE: {
+			DEC(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0xCA: {
+			DEX();
+			this->cycles += 2;
+			break;
+		}
+		case 0x88: {
+			DEY();
+			this->cycles += 2;
+			break;
+		}
+		case 0x49: {
+			EOR(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0x45: {
+			EOR(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x55: {
+			EOR(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x4D: {
+			EOR(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x5D: {
+			EOR(AddressingMode::AbsoluteX);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0x59: {
+			EOR(AddressingMode::AbsoluteY);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0x41: {
+			EOR(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x51: {
+			EOR(AddressingMode::IndirectY);
+			// +1 if page crossed
+			this->cycles += 5;
+			break;
+		}
+		case 0xE6: {
+			INC(AddressingMode::ZeroPage);
+			// +1 if page crossed
+			this->cycles += 5;
+			break;
+		}
+		case 0xF6: {
+			INC(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0xEE: {
+			INC(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0xFE: {
+			INC(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0xE8: {
 			INX();
+			this->cycles += 2;
 			break;
 		}
 		case 0xC8: {
 			INY();
+			this->cycles += 2;
+			break;
+		}
+		case 0x4C: {
+			JMP(AddressingMode::Absolute);
+			this->cycles += 3;
+			break;
+		}
+		case 0x6C: {
+			JMP(AddressingMode::Indirect);
+			this->cycles += 5;
+			break;
+		}
+		case 0x20: {
+			JSR();
+			this->cycles += 6;
+			break;
+		}
+		case 0xA9: {
+			LDA(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xA5: {
+			LDA(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0xB5: {
+			LDA(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0xAD: {
+			LDA(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xBD: {
+			LDA(AddressingMode::AbsoluteX);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0xB9: {
+			LDA(AddressingMode::AbsoluteY);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0xA1: {
+			LDA(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0xB1: {
+			LDA(AddressingMode::IndirectY);
+			// +1 if page crossed
+			this->cycles += 5;
+			break;
+		}
+		case 0xA2: {
+			LDX(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xA6: {
+			LDX(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0xB6: {
+			LDX(AddressingMode::ZeroPageY);
+			this->cycles += 4;
+			break;
+		}
+		case 0xAE: {
+			LDX(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xBE: {
+			LDX(AddressingMode::AbsoluteY);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+
+		case 0xA0: {
+			LDY(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xA4: {
+			LDY(AddressingMode::ZeroPage);
+			this->cycles += 4;
+			break;
+		}
+		case 0xB4: {
+			LDY(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0xAC: {
+			LDY(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xBC: {
+			LDY(AddressingMode::AbsoluteX);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0x4A: {
+			LSR(AddressingMode::Accumulator);
+			this->cycles += 2;
+			break;
+		}
+		case 0x46: {
+			LSR(AddressingMode::ZeroPage);
+			this->cycles += 5;
+			break;
+		}
+		case 0x56: {
+			LSR(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x4E: {
+			LSR(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0x5E: {
+			LSR(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0xEA: {
+			NOP();
+			this->cycles += 2;
+			break;
+		}
+		case 0x09: {
+			ORA(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0x05: {
+			ORA(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x15: {
+			ORA(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x0D: {
+			ORA(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x1D: {
+			ORA(AddressingMode::AbsoluteX);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0x19: {
+			ORA(AddressingMode::AbsoluteY);
+			// +1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0x01: {
+			ORA(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x11: {
+			ORA(AddressingMode::IndirectY);
+			// +1 if page crossed
+			this->cycles += 5;
+			break;
+		}
+		case 0x48: {
+			PHA();
+			this->cycles += 3;
+			break;
+		}
+		case 0x08: {
+			PHP();
+			this->cycles += 3;
+			break;
+		}
+		case 0x68: {
+			PLA();
+			this->cycles += 3;
+			break;
+		}
+		case 0x28: {
+			PLP();
+			this->cycles += 4;
+			break;
+		}
+		case 0x2A: {
+			ROL(AddressingMode::Accumulator);
+			this->cycles += 2;
+			break;
+		}
+		case 0x26: {
+			ROL(AddressingMode::ZeroPage);
+			this->cycles += 5;
+			break;
+		}
+		case 0x36: {
+			ROL(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x2E: {
+			ROL(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0x3E: {
+			ROL(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0x6A: {
+			ROR(AddressingMode::Accumulator);
+			this->cycles += 2;
+			break;
+		}
+		case 0x66: {
+			ROR(AddressingMode::ZeroPage);
+			this->cycles += 5;
+			break;
+		}
+		case 0x76: {
+			ROR(AddressingMode::ZeroPageX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x6E: {
+			ROR(AddressingMode::Absolute);
+			this->cycles += 6;
+			break;
+		}
+		case 0x7E: {
+			ROR(AddressingMode::AbsoluteX);
+			this->cycles += 7;
+			break;
+		}
+		case 0x40: {
+			RTI();
+			this->cycles += 6;
+			break;
+		}
+		case 0x60: {
+			RTS();
+			this->cycles += 6;
+			break;
+		}
+		case 0xE9: {
+			SBC(AddressingMode::Immediate);
+			this->cycles += 2;
+			break;
+		}
+		case 0xE5: {
+			SBC(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0xF5: {
+			SBC(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0xED: {
+			SBC(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xFD: {
+			SBC(AddressingMode::AbsoluteX);
+			// + 1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0xF9: {
+			SBC(AddressingMode::AbsoluteY);
+			// + 1 if page crossed
+			this->cycles += 4;
+			break;
+		}
+		case 0xE1: {
+			SBC(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0xF1: {
+			SBC(AddressingMode::IndirectY);
+			this->cycles += 5;
+			break;
+		}
+		case 0x38: {
+			SEC();
+			this->cycles += 2;
+			break;
+		}
+		case 0xF8: {
+			SED();
+			this->cycles += 2;
+			break;
+		}
+		case 0x78: {
+			SEI();
+			this->cycles += 2;
+			break;
+		}
+		case 0x85: {
+			STA(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x95: {
+			STA(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x8D: {
+			STA(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x9D: {
+			STA(AddressingMode::AbsoluteX);
+			this->cycles += 5;
+			break;
+		}
+		case 0x99: {
+			STA(AddressingMode::AbsoluteY);
+			this->cycles += 5;
+			break;
+		}
+		case 0x81: {
+			STA(AddressingMode::IndirectX);
+			this->cycles += 6;
+			break;
+		}
+		case 0x91: {
+			STA(AddressingMode::IndirectY);
+			this->cycles += 6;
+			break;
+		}
+		case 0x86: {
+			STX(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x96: {
+			STX(AddressingMode::ZeroPageY);
+			this->cycles += 4;
+			break;
+		}
+		case 0x8E: {
+			STX(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0x84: {
+			STY(AddressingMode::ZeroPage);
+			this->cycles += 3;
+			break;
+		}
+		case 0x94: {
+			STY(AddressingMode::ZeroPageX);
+			this->cycles += 4;
+			break;
+		}
+		case 0x8C: {
+			STY(AddressingMode::Absolute);
+			this->cycles += 4;
+			break;
+		}
+		case 0xAA: {
+			TAX();
+			this->cycles += 2;
+			break;
+		}
+		case 0xA8: {
+			TAY();
+			this->cycles += 2;
+			break;
+		}
+		case 0xBA: {
+			TSX();
+			this->cycles += 2;
+			break;
+		}
+		case 0x8A: {
+			TXA();
+			this->cycles += 2;
+			break;
+		}
+		case 0x9A: {
+			TXS();
+			this->cycles += 2;
+			break;
+		}
+		case 0x98: {
+			TYA();
+			this->cycles += 2;
 			break;
 		}
 		default: {
