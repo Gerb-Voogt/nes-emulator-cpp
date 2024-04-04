@@ -285,15 +285,14 @@ public:
     void BEQ();
 
     /**
-     * BIT set, tests if one or more bits are set in a register or target memory location. The mask pattern is
-     * and-ed with the value in memory to set or clear the zero flag, however the result is not kept. Bits 7 and 6
-     * from the value in memory are copied into the N and V flags.
+     * BIT set, tests if one or more bits are set in a register or target memory location. The mask pattern stored in 
+     * the accumulator is and-ed with the value in memory to set or clear the zero flag, however the result is not kept. 
+     * Bits 7 and 6 from the value in memory are copied into the N and V flags.
      * ---
-     * @param `const uint8_t bitmask`, the bitmask to be used for the comparison
      * @param `const AddressingMode mode`, the addressing mode to be used for fetching the operand.
      * ---
      */
-    void BIT(const uint8_t bitmask, const AddressingMode mode);
+    void BIT(const AddressingMode mode);
 
     /**
      * Brach if MInus, branch to a new location if the negative flag is set

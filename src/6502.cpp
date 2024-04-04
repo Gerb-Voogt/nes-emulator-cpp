@@ -226,7 +226,7 @@ int CPU::interpret(std::vector<uint8_t> program) {
 	while (this->program_counter < program.size()) {
 		const uint8_t opcode = program[this->program_counter]; // Fetch the instruction
 		this->program_counter += 1;
-		this->execute_instruction(opcode);
+		execute_instruction(opcode);
 	}
 	return 0;
 }
@@ -260,19 +260,20 @@ void CPU::BCC() {
 
 void CPU::BCS() {
 	if ((this->status & Flag::Carry) == Flag::Carry) {
-		this->program_counter = this->branch();
+		this->program_counter = branch();
 	}
 }
 
 void CPU::BEQ() { 
 	if ((this->status & Flag::Zero) == Flag::Zero) {
-		this->program_counter = this->branch();
+		this->program_counter = branch();
 	}
 }
 
-void CPU::BIT(const uint8_t bitmask, const AddressingMode mode) {
+void CPU::BIT(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
+	const uint8_t bitmask = this->register_a;
 
 	// Take the logical AND 
 	const uint8_t result = (operand & bitmask);
