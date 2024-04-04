@@ -337,17 +337,16 @@ public:
     void CLD();
 
     /**
-     * CLear Interrupt disable, clears the interrupt disable flag 
+     * CLear Interrupt disable
      * ---
      */
     void CLI();
 
     /**
-     * BReaK, forces the generation of an interupt request. Program counter and processor status are pushed to the stack,
-     * then the IRQ interrupt vector at 0xFFFE/F is loaded into the PC and the break flag is set.
+     * CLear oVerflow flag
      * ---
      */
-    void BRK();
+    void CLV();
 
     /**
      * CoMPare accumulator, compares the accumulator against memory in the location specified by addressingmode. Carry flag

@@ -331,6 +331,10 @@ void CPU::CLI() {
 	update_flag(Flag::InteruptDisable, Mode::Clear);
 }
 
+void CPU::CLV() {
+	update_flag(Flag::Overflow, Mode::Clear);
+}
+
 // Look into getting this to work
 void CPU::BRK() {
 	// Push program counter and processor status onto the stack
