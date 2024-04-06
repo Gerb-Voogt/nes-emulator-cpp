@@ -1203,19 +1203,19 @@ void CPU::ORA(const AddressingMode mode) {
 }
 
 void CPU::PHA() {
-	// [TODO]
+	push_stack(this->register_a);
 }
 
 void CPU::PHP() {
-	// [TODO]
+	push_stack(this->status);
 }
 
 void CPU::PLA() {
-	// [TODO]
+	this->register_a = pop_stack();
 }
 
 void CPU::PLP() {
-	// [TODO]
+	this->status = pop_stack();
 }
 
 void CPU::ROL(const AddressingMode mode) {
@@ -1281,11 +1281,12 @@ void CPU::ROR(const AddressingMode mode) {
 }
 
 void CPU::RTI() {
-	// [TODO]
+	this->status = pop_stack();
+	this->program_counter = pop_stack_uint16();
 }
 
 void CPU::RTS() {
-	// [TODO]
+	this->program_counter = pop_stack_uint16() - 1;
 }
 
 void CPU::SBC(const AddressingMode mode) {
