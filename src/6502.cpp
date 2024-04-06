@@ -1136,7 +1136,15 @@ void CPU::JMP(const AddressingMode mode) {
 	this->program_counter = address;
 }
 
-void CPU::JSR() { } // [TODO]
+void CPU::JSR() {
+	// Push current program_counter - 1 to the stack as return address.
+	const uint16_t return_address = this->program_counter - 1;
+	push_stack_uint16(return_address);
+
+	// Get the subroutine address and set the program counter to this address
+	const uint16_t address = get_operand_address(AddressingMode::Absolute);
+	this->program_counter = address;
+} 
 
 void CPU::LDA(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
