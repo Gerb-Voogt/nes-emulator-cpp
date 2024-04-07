@@ -44,8 +44,8 @@ void CPU::memory_write(const uint16_t addr, const uint8_t data) {
 }
 
 void CPU::memory_write_uint16(const uint16_t addr, const uint16_t data) {
-	uint8_t hi_byte = (data << 8); // left shift by 8 to get the upper half of data into uint8_t
-	uint8_t lo_byte = (data & 0b111111); // bitwise & with 255 in order to extract the lower half of data
+	uint8_t hi_byte = (data >> 8); // left shift by 8 to get the upper half of data into uint8_t
+	uint8_t lo_byte = (data & 0b11111111); // bitwise & with 255 in order to extract the lower half of data
 
 	// lo byte (lower half byte of data) should be written to addr
 	// hi byte (upper half byte of data) should be written to addr + 1

@@ -134,7 +134,7 @@ public:
      * is little endian while `C++` assumes big endian representation.
      * ---
      * @param `const uint16_t addr`, the address to write to
-     * @param `const uint8_t data`, the byte of data to be written to this address
+     * @param `const uint16_t data`, the 2 bytes of data to be written to this address
      * ---
      */
     void memory_write_uint16(const uint16_t addr, const uint16_t data);
