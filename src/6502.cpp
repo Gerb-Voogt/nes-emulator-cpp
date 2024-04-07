@@ -1484,12 +1484,23 @@ void CPU::update_zero_and_negative_flags(const uint8_t reg) {
 uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	switch(mode) {
 		case AddressingMode::Immediate: {
-			// Add 0x8000, as program does not live in the zero page
-			return this->program_counter + 0x8000;
+			return this->program_counter;
 		}
 		case AddressingMode::Relative: {
+			uint16_t jmp_addr;
+
+			// Get the offset
 			uint8_t jmp = memory_read(this->program_counter);
-			uint16_t jmp_addr = this->program_counter + 1 + jmp;
+
+			if ((jmp & 0b10000000) != 0) {
+				// Sign bit set, offset negative
+				// This can also be solved by taking the offset as a signed
+				// 8 bit integer, however checking this way is more explicit
+				jmp_addr = this->program_counter + 1 - jmp;
+			} else {
+				// Offset is positive, jump is forward in memory
+				jmp_addr = this->program_counter + 1 + jmp;
+			}
 			return jmp_addr;
 		}
 		case AddressingMode::Accumulator: {
@@ -1510,7 +1521,7 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			return addr;
 		}
 		case AddressingMode::Absolute: {
-			return memory_read_uint16(this->program_counter); // Read the address
+			return memory_read_uint16(this->program_counter);
 		}
 		case AddressingMode::AbsoluteX: {
 			uint16_t base = memory_read_uint16(this->program_counter);
