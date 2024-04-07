@@ -1,4 +1,4 @@
-#include "6502.hpp"
+#include "mos6502.hpp"
 #include <vector>
 
 #ifdef TEST
