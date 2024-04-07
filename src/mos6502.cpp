@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <iomanip>
 
@@ -1579,9 +1580,7 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			return addr;
 		}
 		case AddressingMode::Absolute: {
-			// Remove this program_counte += 1 later and place it somewhere else where it makes more sense
 			uint16_t address = this->program_counter;
-			this->program_counter += 1;
 			return memory_read_uint16(address);
 		}
 		case AddressingMode::AbsoluteX: {
@@ -1624,25 +1623,6 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	return 0;
 }
 
-void CPU::hex_dump() {
-	const char* cdefault = "\033[0m";
-	const char* cyellow = "\033[33m";
-
-	for (int i = 0; i < 0xFFFF; i += 16) {
-		std::cout << cyellow << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << i << ": " << cdefault;
-		for (int j = i; j < i+16; j++) {
-			int val = this->memory[j];
-			std::cout << std::setfill('0') << std::setw(2) << std::hex << val << " ";
-
-			if (j-i == 7) {
-				// Insert extra space in between bytes
-				std::cout << " ";
-			}
-		}
-		std::cout << std::endl;
-	}
-}
-
 void CPU::hex_dump(int lower_bound, int upper_bound) {
 	const char* cdefault = "\033[0m";
 	const char* cyellow = "\033[33m";
@@ -1662,7 +1642,7 @@ void CPU::hex_dump(int lower_bound, int upper_bound) {
 			int val = this->memory[j];
 			std::cout << std::setfill('0') << std::setw(2) << std::hex << val << " ";
 
-			if (j-i == 8) {
+			if (j-i == 7) {
 				// Insert extra space in between bytes
 				std::cout << " ";
 			}
@@ -1670,6 +1650,35 @@ void CPU::hex_dump(int lower_bound, int upper_bound) {
 		std::cout << std::endl;
 	}
 }
+
+void CPU::hex_dump() {
+	int first_memory_address = 0x0000;
+	int last_memory_address = 0xFFFF;
+	this->hex_dump(first_memory_address, last_memory_address+1);
+}
+
+void CPU::hex_dump_stack() {
+	// Stack lives in the memory range `0x0100` - `0x01FF`
+	uint16_t stack_lower_bound = 0x0100;
+	uint16_t stack_upper_bound = 0x01FF;
+	this->hex_dump(stack_lower_bound, stack_upper_bound+1);
+}
+
+void CPU::hex_dump_rom() {
+	// Hex dump the program ROM (lives at 0x8000 - 0xFFFF
+	// However for the snake game this is instead set to the range 0x0600-0x0700
+	uint16_t rom_lower_bound = 0x0600;
+	uint16_t rom_upper_bound = 0x0700;
+	this->hex_dump(rom_lower_bound, rom_upper_bound+1);
+}
+
+Opcode::Opcode(const uint16_t code, const uint8_t size, const uint8_t cycles, const AddressingMode mode, const std::string name)
+	:code(code), size(size), cycles(cycles), mode(mode), name(name) { }
+
+// Implement the OPCODE table later and integrate this
+// std::map<uint16_t, Opcode> OPCODES = {
+// };
+
 
 const std::bitset<8> as_binary8(const uint8_t val) {
 	return std::bitset<8>(val);

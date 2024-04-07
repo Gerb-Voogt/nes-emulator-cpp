@@ -718,8 +718,20 @@ public:
      * ---
      */
     void hex_dump(int lower_bound, int upper_bound);
+    
+    /**
+     * Alias of `CPU::hex_dump(0x0100, 0x0200)` for convenience. Does a hex dump of the current contents of the stack
+     * ---
+     */
+    void hex_dump_stack();
+
+    /**
+     * Alias of `CPU::hex_dump(0x0600, 0x0700)` for convenience. Does a hex dump of the current contents of the stack
+     * ---
+     */
+    void hex_dump_rom();
 };
- 
+
 /**
 * Function for debugging and printing purposes. Prints a uint8_t variable as the bitstring representation
 * ---
