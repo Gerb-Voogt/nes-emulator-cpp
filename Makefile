@@ -1,7 +1,7 @@
 PROGRAM=main
 CC=gcc
 CXX=g++
-CFLAGS=-Wall
+CFLAGS=-Wall -g
 
 OUTPUT_FOLDER=build
 
