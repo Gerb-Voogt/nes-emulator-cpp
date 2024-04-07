@@ -7,7 +7,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "6502.hpp"
+#include "mos6502.hpp"
 
 CPU::CPU() {
 	register_a = 0;
