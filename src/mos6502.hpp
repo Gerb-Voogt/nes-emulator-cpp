@@ -2,11 +2,13 @@
 #include <bitset>
 #include <cstdint>
 #include <vector>
+#include <map>
 
 /**
  * AddressingMode enum for code readability
  */
 enum AddressingMode {
+    Implied,
     Immediate,
     Relative,
     Accumulator,
@@ -42,6 +44,34 @@ enum Mode {
     Clear,
     Update,
 };
+
+/**
+ * Structure for storing Opcodes and their associated meta-data.
+ */
+struct Opcode {
+    const uint16_t code;
+    const uint8_t size;
+    const uint8_t cycles;
+    const AddressingMode mode;
+    const std::string name;
+
+    /**
+     * Constructor, create an opcode with associated code, size, addressingmode, cycle count and name
+     * ---
+     * @param `const uint16_t code` the number (typically hex) associated with the opcode
+     * @param `const uint8_t size` the amount of bytes the opcode uses. This will be used to appropriately increase the program counter
+     * @param `const uint8_t cycles` the amount of cycles that the opcode uses to execute
+     * @param `const AddresssingMode mode` the addressingmode associated with the opcode
+     * @param `const std::string name` the mnemonic of the opcode
+     */
+    Opcode(const uint16_t code, const uint8_t size, const uint8_t cycles, const AddressingMode mode, const std::string name);
+};
+
+/**
+ * Global hashmap of all the available Opcodes and their data
+ */
+extern std::map<uint16_t, Opcode> OPCODES;
+
 
 /**
  * 6502 CPU Emulator containing GP registers, a status registers, memory space, a program counter and a stack pointer.
