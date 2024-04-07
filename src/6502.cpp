@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 #include "6502.hpp"
 
@@ -1551,21 +1552,50 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 	return 0;
 }
 
-// +-----------------+
-// | Debug Functions |
-// +-----------------+
+void CPU::hex_dump() {
+	const char* cdefault = "\033[0m";
+	const char* cyellow = "\033[33m";
 
-// This function should be changed such that it prints out a more readable
-// table format rather than dumping all the text to the screen like it does not
-void CPU::print_memory_content() {
-	// Print out the reserved memory space
-	std::cout << "Address 0x0000 - 0x8000" << std::endl;
-	for (int i = 0; i < 0x8000; i++) {
-		std::cout << unsigned(this->memory[i]) << std::endl;
+	for (int i = 0; i < 0xFFFF; i += 16) {
+		std::cout << cyellow << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << i << ": " << cdefault;
+		for (int j = i; j < i+16; j++) {
+			int val = this->memory[j];
+			std::cout << std::setfill('0') << std::setw(2) << std::hex << val << " ";
+
+			if (j-i == 7) {
+				// Insert extra space in between bytes
+				std::cout << " ";
+			}
+		}
+		std::cout << std::endl;
 	}
-	std::cout << std::endl << "Address 0x8000 - 0xFFFF" << std::endl;
-	for (int i = 0x8000; i < 0xFFFF; i++) {
-		std::cout << unsigned(this->memory[i]) << std::endl;
+}
+
+void CPU::hex_dump(int lower_bound, int upper_bound) {
+	const char* cdefault = "\033[0m";
+	const char* cyellow = "\033[33m";
+
+	// Round the lower bound down
+	if ((lower_bound % 16) != 0) {
+		lower_bound = lower_bound - (lower_bound%16);
+	}
+	// Round the upper bound up
+	if ((upper_bound % 16) != 0) {
+		upper_bound = upper_bound + (upper_bound%16);
+	}
+
+	for (int i = lower_bound; i < upper_bound; i += 16) {
+		std::cout << cyellow << std::setfill('0') << std::setw(4) << std::uppercase << std::hex << i << ": " << cdefault;
+		for (int j = i; j < i+16; j++) {
+			int val = this->memory[j];
+			std::cout << std::setfill('0') << std::setw(2) << std::hex << val << " ";
+
+			if (j-i == 8) {
+				// Insert extra space in between bytes
+				std::cout << " ";
+			}
+		}
+		std::cout << std::endl;
 	}
 }
 

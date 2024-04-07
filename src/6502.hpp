@@ -718,15 +718,26 @@ public:
      * Dump the memory content to stdout for debugging purposes
      * ---
      */
-    void print_memory_content();
+    void hex_dump();
+
+    /**
+     * Overload for hex dump, DUmps the memory content to stdout for a specified range of adresses. Note
+     * that the upper_bound and lower_bound need to be multiples of 16. If they are not, they will be rounded to the closest
+     * multiples of 16.
+     * ---
+     * @param `int lower_bound`, the lower bound of the address range to start dumping, needs to be a multiple of 16
+     * @param `int upper_bound`, the upper bound of the address range to dump, needs to be a multiple of 16
+     * ---
+     */
+    void hex_dump(int lower_bound, int upper_bound);
 };
  
 /**
 * Function for debugging and printing purposes. Prints a uint8_t variable as the bitstring representation
 * ---
-*  @param `const uint8_t val`, the 1 byte value to be printed as a binary string
-*  ---
-*  @return `std::bitset<8> result`, the input argument as a bitstring
-*  ---
+* @param `const uint8_t val`, the 1 byte value to be printed as a binary string
+* ---
+* @return `std::bitset<8> result`, the input argument as a bitstring
+* ---
 */
 const std::bitset<8> as_binary8(const uint8_t val);
