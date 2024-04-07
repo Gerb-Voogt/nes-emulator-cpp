@@ -73,7 +73,7 @@ void CPU::push_stack_uint16(const uint16_t data) {
 
 	// Convert data and write to memory
 	// hi byte should be written to stack_pointer-1, lo byte to stack_pointer
-	uint8_t hi_byte = (data << 8);
+	uint8_t hi_byte = (data >> 8);
 	uint8_t lo_byte = (data & 0b11111111);
 	memory_write(address_lo_byte, lo_byte);
 	memory_write(address_hi_byte, hi_byte);
@@ -128,11 +128,19 @@ void CPU::load_program(const std::vector<uint8_t> program) {
 		throw std::out_of_range("Program does not contain any instructions...");
 	}
 
+	// const uint16_t program_length = program.size(); 
+	// for (int i = 0; i <= program_length; i++) {
+	// 	this->memory[0x8000+i] = program[i]; // load the program into memory
+	// }
+	// this->memory_write_uint16(0xFFFC, 0x8000);
+
+	// Updated for snake game
 	const uint16_t program_length = program.size(); 
 	for (int i = 0; i <= program_length; i++) {
-		this->memory[0x8000+i] = program[i]; // load the program into memory
+		this->memory[0x0600+i] = program[i]; // load the program into memory
 	}
-	this->memory_write_uint16(0xFFFC, 0x8000);
+	// Write location of the first byte
+	this->memory_write_uint16(0xFFFC, 0x0600);
 }
 
 void CPU::load_program_and_run(const std::vector<uint8_t> program) {
@@ -149,20 +157,22 @@ void CPU::reset() {
 	this->status = 0;
 	this->cycles = 0;
 
-	uint16_t first_instruction = 0xFFFC;
-	this->program_counter = memory_read_uint16(first_instruction);
+	uint16_t first_instruction_address = 0xFFFC;
+	this->program_counter = memory_read_uint16(first_instruction_address);
 }
 
 void CPU::execute_instruction(const uint8_t opcode) {
 	// [TODO]: Wrap the instruction in an enum for better matching
-	switch (opcode) {
+	switch(opcode) {
 		case 0x69: {
 			ADC(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0x65: {
 			ADC(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -198,11 +208,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x29: {
 			AND(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0x25: {
 			AND(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -244,6 +256,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x06: {
 			ASL(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 5;
 			break;
 		}
@@ -285,11 +298,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x24: {
 			BIT(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
 		case 0x2C: {
 			BIT(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -317,7 +332,8 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		case 0x00: {
 			BRK();
 			this->cycles += 7;
-			break;
+			return;
+			// break;
 		}
 		case 0x50: {
 			BRK();
@@ -355,11 +371,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xC9: {
 			CMP(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xC5: {
 			CMP(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -370,6 +388,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xCD: {
 			CMP(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -398,11 +417,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xE0: {
 			CPX(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xE4: {
 			CPX(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -413,21 +434,25 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xC0: {
 			CPY(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xC4: {
 			CPY(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
 		case 0xCC: {
 			CPY(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
 		case 0xC6: {
 			DEC(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 5;
 			break;
 		}
@@ -438,6 +463,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xCE: {
 			DEC(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 6;
 			break;
 		}
@@ -458,11 +484,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x49: {
 			EOR(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0x45: {
 			EOR(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -473,6 +501,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x4D: {
 			EOR(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -501,6 +530,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xE6: {
 			INC(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			// +1 if page crossed
 			this->cycles += 5;
 			break;
@@ -512,6 +542,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xEE: {
 			INC(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 6;
 			break;
 		}
@@ -547,11 +578,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xA9: {
 			LDA(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xA5: {
 			LDA(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -562,6 +595,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xAD: {
 			LDA(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -590,11 +624,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xA2: {
 			LDX(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xA6: {
 			LDX(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -605,6 +641,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xAE: {
 			LDX(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -617,11 +654,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 
 		case 0xA0: {
 			LDY(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xA4: {
 			LDY(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 4;
 			break;
 		}
@@ -632,6 +671,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xAC: {
 			LDY(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -648,6 +688,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x46: {
 			LSR(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 5;
 			break;
 		}
@@ -658,6 +699,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x4E: {
 			LSR(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 6;
 			break;
 		}
@@ -673,11 +715,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x09: {
 			ORA(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0x05: {
 			ORA(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -688,6 +732,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x0D: {
 			ORA(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -741,6 +786,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x26: {
 			ROL(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 5;
 			break;
 		}
@@ -751,6 +797,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x2E: {
 			ROL(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 6;
 			break;
 		}
@@ -766,6 +813,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x66: {
 			ROR(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 5;
 			break;
 		}
@@ -776,6 +824,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x6E: {
 			ROR(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 6;
 			break;
 		}
@@ -796,11 +845,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xE9: {
 			SBC(AddressingMode::Immediate);
+			this->program_counter += 1;
 			this->cycles += 2;
 			break;
 		}
 		case 0xE5: {
 			SBC(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -811,6 +862,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0xED: {
 			SBC(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -853,6 +905,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x85: {
 			STA(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -888,6 +941,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x86: {
 			STX(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -898,11 +952,13 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x8E: {
 			STX(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
 		case 0x84: {
 			STY(AddressingMode::ZeroPage);
+			this->program_counter += 1;
 			this->cycles += 3;
 			break;
 		}
@@ -913,6 +969,7 @@ void CPU::execute_instruction(const uint8_t opcode) {
 		}
 		case 0x8C: {
 			STY(AddressingMode::Absolute);
+			this->program_counter += 2;
 			this->cycles += 4;
 			break;
 		}
@@ -964,10 +1021,11 @@ int CPU::interpret(std::vector<uint8_t> program) {
 }
 
 void CPU::run() {
-	// TODO: Fix this implementation. There might be something weird going on here with the program counter
-	// counting down from `0xFFFF` rather than up from `0x8000`.
 	while (true) {
 		uint8_t opcode = memory_read(program_counter);
+		if (opcode == 0x00) {
+			break; // Exit if opcode is 0x00
+		}
 		this->program_counter += 1;
 		this->execute_instruction(opcode);
 	}
@@ -1069,11 +1127,11 @@ void CPU::CLV() {
 
 // Look into getting this to work
 void CPU::BRK() {
-	// Push program counter and processor status onto the stack
-	uint16_t interrupt_vector = 0xFFFE;
-	this->program_counter = memory_read(interrupt_vector);
-	// Set the break flag to 1
-	this->status = this->status | Flag::Break;
+	// // Push program counter and processor status onto the stack
+	// uint16_t interrupt_vector = 0xFFFE;
+	// this->program_counter = memory_read(interrupt_vector);
+	// // Set the break flag to 1
+	// this->status = this->status | Flag::Break;
 }
 
 void CPU::CMP(const AddressingMode mode) {
@@ -1139,7 +1197,7 @@ void CPU::JMP(const AddressingMode mode) {
 
 void CPU::JSR() {
 	// Push current program_counter - 1 to the stack as return address.
-	const uint16_t return_address = this->program_counter - 1;
+	const uint16_t return_address = this->program_counter + 1;
 	push_stack_uint16(return_address);
 
 	// Get the subroutine address and set the program counter to this address
@@ -1159,7 +1217,7 @@ void CPU::LDX(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
 
-	this->register_a = operand;
+	this->register_irx = operand;
 	update_zero_and_negative_flags(this->register_a);
 }
 
@@ -1167,7 +1225,7 @@ void CPU::LDY(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
 
-	this->register_a = operand;
+	this->register_iry = operand;
 	update_zero_and_negative_flags(this->register_a);
 }
 
@@ -1521,7 +1579,10 @@ uint16_t CPU::get_operand_address(const AddressingMode mode) {
 			return addr;
 		}
 		case AddressingMode::Absolute: {
-			return memory_read_uint16(this->program_counter);
+			// Remove this program_counte += 1 later and place it somewhere else where it makes more sense
+			uint16_t address = this->program_counter;
+			this->program_counter += 1;
+			return memory_read_uint16(address);
 		}
 		case AddressingMode::AbsoluteX: {
 			uint16_t base = memory_read_uint16(this->program_counter);

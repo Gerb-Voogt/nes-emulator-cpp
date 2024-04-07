@@ -1,5 +1,7 @@
-#include "mos6502.hpp"
 #include <vector>
+#include <iostream>
+
+#include "mos6502.hpp"
 
 #ifdef TEST
 #include <cstdint>
@@ -23,9 +25,6 @@ void run_tests() {
 
 int main() {
 	#ifdef TEST
-	CPU nes_6502 = CPU();
-	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xE9, 0x00}; // Move 0x00 into register x and increment by 1
-	nes_6502.load_program(program);
 	run_tests();
 	#endif
 
@@ -53,5 +52,7 @@ int main() {
 		0xEA, 0xCA, 0xD0, 0xFB, 0x60
 	};
 	nes_6502.load_program(game);
-	// nes_6502.hex_dump();
+	nes_6502.reset();
+	nes_6502.run();
+	nes_6502.hex_dump();
 }
