@@ -178,8 +178,6 @@ public:
      * stack pointer and the stack pointer decremented by 1. which points to the next free location.
      * Note that this operation decrements the stack pointer by 2. The stack starts at `0x01FF` and grows downward towards
      * `0x0100`.
-     *
-     * TODO: Implement handling of stack over- and underflow exceptions. Not sure how this should be handled by the CPU, look into this
      * ---
      * @param `const uitn16_t value`, 2 byte value to write to the stack
      * ---
@@ -444,8 +442,6 @@ public:
     /**
      * Jump to SubRoutine, pushes address minus one of the return point on the stack and then sets the program counter to 
      * the target memory address
-     *
-     * TODO
      * ---
      */
     void JSR();
@@ -497,32 +493,24 @@ public:
 
     /**
      * PusH Accumulator, pushes a copy of the accumulator onto the stack
-     *
-     * TODO
      * ---
      */
     void PHA();
 
     /**
      * PusH Processor status, pushes a copy of the status register onto the stack
-     *
-     * TODO
      * ---
      */
     void PHP();
 
     /**
      * PulL Accumulator, pull the accumulator from the stack
-     *
-     * TODO
      * ---
      */
     void PLA();
 
     /**
      * PulL Processor status, pulls the status register from the stack
-     *
-     * TODO
      * ---
      */
     void PLP();
