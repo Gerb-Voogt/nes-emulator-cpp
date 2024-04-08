@@ -16,25 +16,29 @@
 void run_tests() {
     int total_tests = 0;
     int tests_succeeded = 0;
-    std::cout << "lda tests:" << std::endl;
+    std::cout << "lda tests:" << std::endl << "----------" << std::endl;
     tests_succeeded += test_lda_immediate_load_state();
     tests_succeeded += test_lda_zero_flag();
     total_tests += 2;
 
-    std::cout << std::endl << "tax tests:" << std::endl;
+    std::cout << std::endl << "tax tests:" << std::endl << "----------" << std::endl;
     tests_succeeded += test_tax_load_state();
     tests_succeeded += test_tax_zero_flag();
     total_tests += 2;
 
-    std::cout << std::endl << "inx tests:" << std::endl;
+    std::cout << std::endl << "inx tests:" << std::endl << "----------" << std::endl;
     tests_succeeded += test_inx();
     tests_succeeded += test_inx_overflow();
     total_tests += 2;
 
-    std::cout << std::endl << "iny tests:" << std::endl;
+    std::cout << std::endl << "iny tests:" << std::endl << "----------" << std::endl;
     tests_succeeded += test_iny();
     tests_succeeded += test_iny_overflow();
     total_tests += 2;
+
+    std::cout << std::endl << "adc tests:" << std::endl << "----------" << std::endl;
+    tests_succeeded += test_adc();
+    total_tests += 1;
 
     std::cout << YELLOW << "[INFO] " << DEFAULT 
               << tests_succeeded << "/" << total_tests 

@@ -10,6 +10,10 @@
 // TODO: Write unit tests for INY
 
 
+// adc
+int test_adc();
+int test_adc_status_updates();
+
 // lda
 int test_lda_immediate_load_state();
 int test_lda_zero_flag();
@@ -25,4 +29,3 @@ int test_inx_overflow();
 // iny
 int test_iny();
 int test_iny_overflow();
-

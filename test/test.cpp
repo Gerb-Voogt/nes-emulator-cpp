@@ -6,8 +6,8 @@
 //		- BCS (Branch if Carry Set)
 //		- INY (Increment Y register), Mostly the same as increment X
 //------------------------------------------------------------------------
+#include "test.hpp"
 #include <cstdint>
-#include <cassert>
 #include <iostream>
 #include <vector>
 #include "../src/mos6502.hpp"
@@ -224,4 +224,50 @@ int test_iny_overflow() {
 	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
 		      << __FUNCTION__ << ": All tests passed" << std::endl;
 	return 1;
+}
+
+int test_adc() {
+	CPU cpu = CPU();
+	std::vector<uint8_t> program = {0xA9, 0x12, 0x69, 0x22, 0x00};
+	cpu.load_program(program);
+	cpu.reset();
+	cpu.run();
+
+	if (cpu.register_a != (0x12 + 0x22)) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+				  << std::endl;
+		return 0;
+	}
+
+	std::vector<uint8_t> program_with_carry_bit = {0x38, 0xA9, 0x12, 0x69, 0x22, 0x00};
+	cpu.load_program(program_with_carry_bit);
+	cpu.reset();
+	cpu.run();
+
+	if (cpu.register_a != (0x12 + 0x22 + 1)) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+				  << std::endl;
+		return 0;
+	}
+
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
+}
+
+int test_adc_status_updates() {
+	CPU cpu = CPU();
+	std::vector<uint8_t> program = {0xA9, 0xFF, 0x69, 0x22, 0x00};
+	cpu.load_program(program);
+	cpu.reset();
+	cpu.run();
+
+	if (cpu.register_a != (0xFF + 0x22)) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+				  << std::endl;
+		return 0;
+	}
 }
