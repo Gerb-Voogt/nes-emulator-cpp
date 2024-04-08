@@ -1355,7 +1355,11 @@ void CPU::RTS() {
 }
 
 void CPU::SBC(const AddressingMode mode) {
-	// [TODO]
+	const uint16_t operand_address = get_operand_address(mode);
+	const uint8_t operand = memory_read(operand_address);
+	add_to_accumulator_register(~operand + 1);
+
+	update_zero_and_negative_flags(this->register_a);
 }
 
 void CPU::SEC() {
@@ -1396,7 +1400,8 @@ void CPU::TAY() {
 }
 
 void CPU::TSX() {
-	// [TODO]
+	this->register_irx = this->stack_pointer;
+	update_zero_and_negative_flags(this->register_irx);
 }
 
 void CPU::TXA() {
@@ -1404,12 +1409,8 @@ void CPU::TXA() {
 	update_zero_and_negative_flags(this->register_a);
 }
 
-void CPU::TSA() {
-	// [TODO]
-}
-
 void CPU::TXS() {
-	// [TODO]
+	this->stack_pointer = this->register_irx;
 }
 
 void CPU::TYA() {
@@ -1652,7 +1653,7 @@ void CPU::hex_dump(int lower_bound, int upper_bound) {
 				std::cout << " ";
 			}
 		}
-		std::cout << std::endl;
+		std::cout << std::dec << std::endl;
 	}
 }
 
@@ -1660,6 +1661,13 @@ void CPU::hex_dump() {
 	int first_memory_address = 0x0000;
 	int last_memory_address = 0xFFFF;
 	this->hex_dump(first_memory_address, last_memory_address+1);
+}
+
+void CPU::hex_dump_zero_page() {
+	// Stack lives in the memory range `0x0100` - `0x01FF`
+	uint16_t zp_lb = 0x0000;
+	uint16_t zp_ub = 0x00FF;
+	this->hex_dump(zp_lb, zp_ub+1);
 }
 
 void CPU::hex_dump_stack() {
