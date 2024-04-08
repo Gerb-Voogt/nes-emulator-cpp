@@ -12,7 +12,12 @@
 #include <vector>
 #include "../src/mos6502.hpp"
 
-void test_lda_immediate_load_state() {
+#define DEFAULT         "\033[0m"
+#define RED             "\033[31m"
+#define GREEN           "\033[32m"
+#define YELLOW          "\033[33m"
+
+int test_lda_immediate_load_state() {
 	// Test LDA immediate mode
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x05, 0x00};
@@ -20,14 +25,31 @@ void test_lda_immediate_load_state() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_a == 0x05);
-	assert((cpu.status & 0b00000010) == 0);
-	assert((cpu.status & 0b10000000) == 0);
+	if (cpu.register_a != 0x05) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_a != 0x05"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0){ 
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Negative) != 0) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Negative != 0"
+				  << std::endl;
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_lda_zero_flag() {
+int test_lda_zero_flag() {
 	// Test whether the LDA instruction properly sets the zero flag
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0x00};
@@ -35,14 +57,25 @@ void test_lda_zero_flag() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_a == 0x00);
-	assert((cpu.status & 0b00000010) == 0b10);
+	if (cpu.register_a != 0x00) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_a != 0x00"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0b10) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0b00000010"
+				  << std::endl;
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
-
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_tax_load_state() {
+int test_tax_load_state() {
 	// Test whether the TAX instruction properly transfers accumulator content to the X register
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x05, 0xAA, 0x00};
@@ -50,14 +83,31 @@ void test_tax_load_state() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x05);
-	assert((cpu.status & Flag::Zero) == 0);
-	assert((cpu.status & Flag::Negative) == 0);
+	if (cpu.register_irx != 0x05) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_a != 0x00"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0){
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Negative) != 0) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Negative != 0"
+				  << std::endl;
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_tax_zero_flag() {
+int test_tax_zero_flag() {
 	// Test whether the TAX instruction properly sets the 0 flag
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0x00};
@@ -65,13 +115,25 @@ void test_tax_zero_flag() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x00);
-	assert((cpu.status & 0b00000010) == 0b10);
+	if (cpu.register_irx != 0x00) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_irx != 0x00"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0b10) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0"
+				  << std::endl;
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_inx() {
+int test_inx() {
 	// Test whether the INX instruction works as intended
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xE8, 0x00}; // Move 0x00 into register x and increment by 1
@@ -79,13 +141,26 @@ void test_inx() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x01);
-	assert((cpu.status & Flag::Zero) == 0); // N flag should not be set
+	if (cpu.register_irx != 0x01) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_irx != 0x01"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0"
+				  << std::endl;
+		// N flag should not be set
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_inx_overflow() {
+int test_inx_overflow() {
 	// Test whether the INX instruction properly handles the overflow case
 	CPU cpu = CPU();
 	std::vector<uint8_t> program = {0xA2, 0xFF, 0xE8, 0xE8, 0x00};  // Increment irx twice to overflow
@@ -93,33 +168,60 @@ void test_inx_overflow() {
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x01);
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	if (cpu.register_irx != 0x01) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_irx != 0x01"
+				  << std::endl;
+		return 0;
+	}
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_iny() {
+int test_iny() {
 	// Test whether the INY instruction works as intended
 	CPU cpu = CPU();
-	std::vector<uint8_t> program = {0xA9, 0x00, 0xAA, 0xC8, 0x00}; // Move 0x00 into register x and increment by 1
+	std::vector<uint8_t> program = {0xA9, 0x00, 0xA8, 0xC8, 0x00}; // Move 0x00 into register x and increment by 1
 	cpu.load_program(program);
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x01);
-	assert((cpu.status & Flag::Zero) == 0); // N flag should not be set
+	if (cpu.register_iry != 0x01) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+				  << std::endl;
+		return 0;
+	}
+	if ((cpu.status & Flag::Zero) != 0) {
+		// N flag should not be set
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.status & Flag::Zero != 0x01"
+				  << std::endl;
+		return 0;
+	}
 
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
 
-void test_iny_overflow() {
+int test_iny_overflow() {
 	// Test whether the INY instruction properly handles the overflow case
 	CPU cpu = CPU();
-	cpu.register_irx = 0xFF; 
-	std::vector<uint8_t> program = {0xC8, 0xC8, 0x00};  // Increment irx twice to overflow
+	std::vector<uint8_t> program = {0xA9, 0xFF, 0xA8, 0xC8, 0xC8, 0x00};  // Increment irx twice to overflow
 	cpu.load_program(program);
 	cpu.reset();
 	cpu.run();
 
-	assert(cpu.register_irx == 0x01);
-	std::cout << __FUNCTION__ << ": All tests passed" << std::endl;
+	if (cpu.register_iry != 0x01) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+				  << std::endl;
+		return 0;
+	}
+
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }
