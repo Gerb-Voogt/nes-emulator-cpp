@@ -2,6 +2,7 @@ PROGRAM=main
 CC=gcc
 CXX=g++
 CFLAGS=-Wall -g
+LIBS=-lncurses
 
 OUTPUT_FOLDER=build
 
@@ -12,17 +13,19 @@ TST=$(wildcard test/*.cpp)
 
 default: ${PROGRAM}
 
-all:
-	make ${PROGRAM}
-	make cpu-test
-
 ${PROGRAM}:
 	mkdir -p ${OUTPUT_FOLDER}
-	${CXX} ${CFLAGS} -o ${OUTPUT_FOLDER}/$@ ${SRC}
+	${CXX} ${CFLAGS} -o ${OUTPUT_FOLDER}/$@ ${SRC} ${LIBS}
 
 cpu-test: ${SRC}
 	mkdir -p ${OUTPUT_FOLDER}
-	${verbose}${CXX} -DTEST ${CFLAGS} -g -o ${OUTPUT_FOLDER}/$@ ${SRC} ${TST}
+	${verbose}${CXX} -DTEST ${CFLAGS} -g -o ${OUTPUT_FOLDER}/$@ ${SRC} ${TST} ${LIBS}
+
+test-all: ${SRC}
+	mkdir -p ${OUTPUT_FOLDER}
+	make cpu-test
+	./build/cpu-test
+
 
 .PHONY: clean
 clean:
