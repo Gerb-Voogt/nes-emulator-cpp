@@ -3,6 +3,8 @@
 
 #include "mos6502.hpp"
 
+// #define TEST
+
 #ifdef TEST
 #include <cstdint>
 #include <iostream>
@@ -38,7 +40,8 @@ void run_tests() {
 
     std::cout << std::endl << "adc tests:" << std::endl << "----------" << std::endl;
     tests_succeeded += test_adc();
-    total_tests += 1;
+    tests_succeeded += test_adc_status_updates();
+    total_tests += 2;
 
     std::cout << YELLOW << "[INFO] " << DEFAULT 
               << tests_succeeded << "/" << total_tests 

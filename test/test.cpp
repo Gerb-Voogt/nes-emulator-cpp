@@ -264,10 +264,27 @@ int test_adc_status_updates() {
 	cpu.reset();
 	cpu.run();
 
-	if (cpu.register_a != (0xFF + 0x22)) {
+	if (cpu.register_a != (0x21) || (cpu.status & Flag::Carry) == 0) {
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+			      << __FUNCTION__ << ": cpu.register_a != 0x22, cpu.status & Flag::Carry == 0"
 				  << std::endl;
 		return 0;
 	}
+
+	cpu.reset_memory_space();
+	std::vector<uint8_t> program_new = {0xA9, 0xFF, 0x69, 0x22, 0x69, 0x22, 0x00};
+	cpu.load_program(program_new);
+	cpu.reset();
+	cpu.run();
+
+	if (cpu.register_a != (0x21 + 0x22 + 1) || (cpu.status & Flag::Carry) != 0) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": cpu.register_a != 0x44, cpu.status & Flag::Carry != 0"
+				  << std::endl;
+		return 0;
+	}
+
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
 }

@@ -236,6 +236,12 @@ public:
      * ---
      */
     void reset();
+
+    /**
+     * Reinitialize all the memory of the CPU back to 0
+     * ---
+     */
+    void reset_memory_space();
     
     /**
      * Execute the OPCODE passed in.

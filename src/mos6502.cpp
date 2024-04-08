@@ -162,6 +162,12 @@ void CPU::reset() {
 	this->program_counter = memory_read_uint16(first_instruction_address);
 }
 
+void CPU::reset_memory_space() {
+	for (int i = 0; i < 0xFFFF; i++) {
+		this->memory[i] = 0;
+	}
+}
+
 void CPU::execute_instruction(const uint8_t opcode) {
 	// [TODO]: Wrap the instruction in an enum for better matching
 	switch(opcode) {
@@ -1039,7 +1045,6 @@ void CPU::ADC(const AddressingMode mode) {
 	const uint8_t operand = memory_read(operand_address);
 	add_to_accumulator_register(operand);
 
-	update_flag(Flag::Carry, Mode::Set);
 	update_zero_and_negative_flags(this->register_a);
 }
 
