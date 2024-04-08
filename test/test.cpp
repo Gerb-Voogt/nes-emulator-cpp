@@ -235,7 +235,7 @@ int test_adc() {
 
 	if (cpu.register_a != (0x12 + 0x22)) {
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+			      << __FUNCTION__ << ": cpu.register_a != 0x12 + 0x22"
 				  << std::endl;
 		return 0;
 	}
@@ -247,7 +247,7 @@ int test_adc() {
 
 	if (cpu.register_a != (0x12 + 0x22 + 1)) {
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": cpu.register_iry != 0x01"
+			      << __FUNCTION__ << ": cpu.register_a != 0x01"
 				  << std::endl;
 		return 0;
 	}
@@ -258,33 +258,113 @@ int test_adc() {
 }
 
 int test_adc_status_updates() {
+	/*
+	 * ; Program: ;
+	 * ; Program does some ADC operation and then pushes the status register to the stack.
+	 *
+	 * ; V and C Flags should both be clear ;
+	 * LDA #$50
+	 * ADC #$10
+	 * STA $00  ; Should be 0x60
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; V flag and C Flags should both be set ;
+	 * LDA #$D0;
+	 * ADC #$90;
+	 * STA $01  ; Should be 0x60
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; V flag Should be set, C Flag should be clear
+	 * LDA #$50;
+	 * ADC #$50;
+	 * STA $02  ; Should be 0xA0
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; Check the content of the stack (for all 3 situations to check whethter the flags where set correctly.
+	 */
 	CPU cpu = CPU();
-	std::vector<uint8_t> program = {0xA9, 0xFF, 0x69, 0x22, 0x00};
+	std::vector<uint8_t> program = {
+		0xA9, 0x50, // LDA #$50
+		0x69, 0x10, // ADC #$10
+		0x85, 0x00, // STA $00
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0xA9, 0xD0, // LDA #$50
+		0x69, 0x90, // ADC #$10
+		0x85, 0x01, // STA $00
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0xA9, 0x50, // LDA #$50
+		0x69, 0x50, // ADC #$50
+		0x85, 0x02, // STA $00
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0x00
+	};
 	cpu.load_program(program);
 	cpu.reset();
 	cpu.run();
+    // cpu.hex_dump_zero_page();
+    // cpu.hex_dump_stack();
 
-	if (cpu.register_a != (0x21) || (cpu.status & Flag::Carry) == 0) {
+    // Pop in reverse order, stack is LIFO
+    uint8_t status_3 = cpu.pop_stack();
+    uint8_t status_2 = cpu.pop_stack();
+	uint8_t status_1 = cpu.pop_stack();
+	uint8_t res_1 = cpu.memory_read(0x0000);
+	uint8_t res_2 = cpu.memory_read(0x0001);
+	uint8_t res_3 = cpu.memory_read(0x0002);
+
+    // First Test
+    if ((status_1 & (Flag::Overflow | Flag::Carry)) != 0) {
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": cpu.register_a != 0x22, cpu.status & Flag::Carry == 0"
-				  << std::endl;
+			      << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) == 0" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
 		return 0;
-	}
-
-	cpu.reset_memory_space();
-	std::vector<uint8_t> program_new = {0xA9, 0xFF, 0x69, 0x22, 0x69, 0x22, 0x00};
-	cpu.load_program(program_new);
-	cpu.reset();
-	cpu.run();
-
-	if (cpu.register_a != (0x21 + 0x22 + 1) || (cpu.status & Flag::Carry) != 0) {
+    }
+    if (res_1 != 0x60) {
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": cpu.register_a != 0x44, cpu.status & Flag::Carry != 0"
-				  << std::endl;
+			      << __FUNCTION__ << ": res_1 != 0x60" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
 		return 0;
-	}
+    }
+
+    // Second Test
+    if ((status_2 & (Flag::Overflow | Flag::Carry)) != (Flag::Overflow | Flag::Carry)) {
+        std::cout << RED << "[FAIL]: " << DEFAULT
+                  << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) != (Flag::Overflow | Flag::Carry)" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
+        return 0;
+    }
+    if (res_2 != 0x60) {
+        std::cout << RED << "[FAIL]: " << DEFAULT
+                  << __FUNCTION__ << ": res_2 != 0x60" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
+        return 0;
+    }
+
+    // Third Test
+    if ((status_3 & Flag::Overflow) == 0 || (status_3 & Flag::Carry) != 0) {
+        // If the Overflow Flag is NOT set OR the Carry Flag IS set
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) == 0" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
+		return 0;
+    }
+    if (res_3 != 0xA0) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": res_3 != 0xA0" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
+		return 0;
+    }
 
 	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
 		      << __FUNCTION__ << ": All tests passed" << std::endl;
 	return 1;
 }
+
+
+
