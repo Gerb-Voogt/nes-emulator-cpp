@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <map>
+#include <functional>
 
 /**
  * AddressingMode enum for code readability
@@ -265,11 +266,15 @@ public:
 
     /**
      * Run the CPU, executing whatever program is loaded into memory space `0x8000` - `0xFFFF`
-     *
-     * TODO: Implementation is currently not working as intented
      * ---
      */
     void run();
+
+    /**
+     * Run the CPU with a callback such that user input can be parsed. Executes whatever program is loaded into memory space `0x8000` - `0xFFFF`
+     * ---
+     */
+    void run_callback(const std::function<void(CPU*)>& callback);
     
     /**
      * ADd with Carry, adds the operand to the accumulator along with the carry bit. Carry bit gets set if the addition operation 
@@ -666,12 +671,6 @@ public:
     void TXA();
 
     /**
-     * Transfer Stack pointer to Accumulator register, setting zero and negative flags
-     * ---
-     */
-    void TSA();
-
-    /**
      * Transfer X register to Stack pointer, setting zero and negative flags
      * ---
      */
@@ -754,6 +753,12 @@ public:
      * ---
      */
     void hex_dump(int lower_bound, int upper_bound);
+
+    /**
+     * Alias of `CPU::hex_dump(0x0000, 0x00FF)` for convenience. Does a hex dump of the Zero Page
+     * ---
+     */
+    void hex_dump_zero_page();
     
     /**
      * Alias of `CPU::hex_dump(0x0100, 0x0200)` for convenience. Does a hex dump of the current contents of the stack
