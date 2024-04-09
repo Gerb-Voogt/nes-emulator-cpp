@@ -712,6 +712,15 @@ public:
     void add_to_accumulator_register(const uint8_t operand);
 
     /**
+     * Subtract a value from the accumulator accounting for carry-over, setting the overflow flag if overflow
+     * occurs.
+     * ---
+     * @param `uint8_t operand`, the operand to add to the accumulator
+     * ---
+     */
+    void subtract_from_accumulator_register(const uint8_t operand);
+
+    /**
      * Common subroutine of setting the zero flag if result is zero and setting the negative flag if the
      * result is negative.
      * ---

@@ -335,7 +335,7 @@ int test_adc_status_updates() {
     // Second Test
     if ((status_2 & (Flag::Overflow | Flag::Carry)) != (Flag::Overflow | Flag::Carry)) {
         std::cout << RED << "[FAIL]: " << DEFAULT
-                  << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) != (Flag::Overflow | Flag::Carry)" << std::endl
+                  << __FUNCTION__ << ": (status_2 & (Flag::Overflow | Flag::Carry)) != (Flag::Overflow | Flag::Carry)" << std::endl
                   << "Overflow and Carry Flags not set correctly" << std::endl;
         return 0;
     }
@@ -350,7 +350,7 @@ int test_adc_status_updates() {
     if ((status_3 & Flag::Overflow) == 0 || (status_3 & Flag::Carry) != 0) {
         // If the Overflow Flag is NOT set OR the Carry Flag IS set
 		std::cout << RED << "[FAIL]: " << DEFAULT
-			      << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) == 0" << std::endl
+			      << __FUNCTION__ << ": (status_3 & Flag::Overflow) == 0 || (status_3 & Flag::Carry) != 0" << std::endl
                   << "Overflow and Carry Flags not set correctly" << std::endl;
 		return 0;
     }
@@ -367,4 +367,112 @@ int test_adc_status_updates() {
 }
 
 
+int test_sbc_status_updates() {
+	/*
+	 * ; Program: ;
+	 * ; Program does some ADC operation and then pushes the status register to the stack.
+	 *
+	 * ; V flag should be clear and C Flag should be set ;
+	 * LDA #$50
+	 * SBC #$F0
+	 * STA $00  ; Should be 0x60
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; V and C flags should both be set
+	 * LDA #$50;
+	 * SBC #$B0;
+	 * STA $01  ; Should be 0xA0
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; V flag Should be set, C Flag should be clear
+	 * LDA #$D0;
+	 * SBC #$70;
+	 * STA $02  ; Should be 0x60
+	 * PHP
+	 * CLC
+	 * CLV
+	 *
+	 * ; Check the content of the stack (for all 3 situations to check whethter the flags where set correctly.
+	 */
+	CPU cpu = CPU();
+	std::vector<uint8_t> program = {
+		0xA9, 0x50, // LDA #$50
+		0xE9, 0xF0, // SBC #$F0
+		0x85, 0x00, // STA $00
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0xA9, 0x50, // LDA #$50
+		0xE9, 0xB0, // SBC #$B0
+		0x85, 0x01, // STA $01
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0xA9, 0xD0, // LDA #$D0
+		0xE9, 0x70, // SBC #$70
+		0x85, 0x02, // STA $02
+		0x08, 0x18, 0xB8, // PHP, CLC, CLV
+		0x00
+	};
+	cpu.load_program(program);
+	cpu.reset();
+	cpu.run();
+    // cpu.hex_dump_zero_page();
+    // cpu.hex_dump_stack();
 
+    // Pop in reverse order, stack is LIFO
+    uint8_t status_3 = cpu.pop_stack();
+    uint8_t status_2 = cpu.pop_stack();
+	uint8_t status_1 = cpu.pop_stack();
+	uint8_t res_1 = cpu.memory_read(0x0000);
+	uint8_t res_2 = cpu.memory_read(0x0001);
+	uint8_t res_3 = cpu.memory_read(0x0002);
+
+    // First Test
+    if ((status_1 & Flag::Overflow) != 0 || (status_1 & Flag::Carry) == 0) {
+        // If the Overflow Flag is NOT set OR the Carry Flag IS set
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": status_1 & (Flag::Overflow | Flag::Carry) == 0" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
+		return 0;
+    }
+    if (res_1 != 0x60) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": res_1 != 0x60" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
+		return 0;
+    }
+
+    // Second Test
+    if ((status_2 & (Flag::Overflow | Flag::Carry)) != (Flag::Overflow | Flag::Carry)) {
+        std::cout << RED << "[FAIL]: " << DEFAULT
+                  << __FUNCTION__ << ": (status_2 & (Flag::Overflow | Flag::Carry)) != (Flag::Overflow | Flag::Carry)" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
+        return 0;
+    }
+    if (res_2 != 0xA0) {
+        std::cout << RED << "[FAIL]: " << DEFAULT
+                  << __FUNCTION__ << ": res_2 != 0x60" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
+        return 0;
+    }
+
+    // Third Test
+    if ((status_3 & Flag::Overflow) == 0 || (status_3 & Flag::Carry) != 0) {
+        // If the Overflow Flag is NOT set OR the Carry Flag IS set
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": (status_3 & Flag::Overflow) == 0 || (status_3 & Flag::Carry) != 0" << std::endl
+                  << "Overflow and Carry Flags not set correctly" << std::endl;
+		return 0;
+    }
+    if (res_3 != 0x60) {
+		std::cout << RED << "[FAIL]: " << DEFAULT
+			      << __FUNCTION__ << ": res_3 != 0xA0" << std::endl
+                  << "Result 1 Incorrect" << std::endl;
+		return 0;
+    }
+
+	std::cout << GREEN << "[SUCCESS]: " << DEFAULT 
+		      << __FUNCTION__ << ": All tests passed" << std::endl;
+	return 1;
+}

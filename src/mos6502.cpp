@@ -1357,7 +1357,7 @@ void CPU::RTS() {
 void CPU::SBC(const AddressingMode mode) {
 	const uint16_t operand_address = get_operand_address(mode);
 	const uint8_t operand = memory_read(operand_address);
-	add_to_accumulator_register(~operand + 1);
+	subtract_from_accumulator_register(operand);
 
 	update_zero_and_negative_flags(this->register_a);
 }
@@ -1505,11 +1505,42 @@ void CPU::add_to_accumulator_register(const uint8_t operand) {
 	// Implying that overflow has happened
 	if ((result ^ operand) & (result ^ this->register_a) & 0x80) {
 		update_flag(Flag::Overflow, Mode::Set);
+	} else {
+		update_flag(Flag::Overflow, Mode::Clear);
 	}
 
-	// Carry if sum is larger then what fits in the 8-bit register
-	if (sum > 0xFF) {
+	this->register_a = result;
+}
+
+void CPU::subtract_from_accumulator_register(const uint8_t operand) {
+	uint16_t diff = (uint16_t)this->register_a - operand;
+
+	if ((this->status & Flag::Carry) != 0) {
+		// add the carry if the flag is set
+		diff -= 1;
+		update_flag(Flag::Carry, Mode::Clear);
+	}
+
+	// Carry if the result does not fit in an 8-bit register
+	if (diff > 0x100) {
 		update_flag(Flag::Carry, Mode::Set);
+	}
+
+	const uint8_t result = (uint8_t)diff;
+
+	// Check for overflow:
+	//	If subtracting a positive number from a negative number yielded a positive result
+	//	OR
+	//	If subtracting a negative number from a positive number yielded a negative result
+	//	THEN
+	//	the overflow bit should be set
+	//	This can probably be rewritten into a more elegant expression using boolean algebra
+	//	but for now this works and is fine.
+	if (((this->register_a & 0x80) && !(operand & 0x80) && !(result & 0x80))
+		|| (!(this->register_a & 0x80) && (operand & 0x80) && (result & 0x80))) {
+		update_flag(Flag::Overflow, Mode::Set);
+	} else {
+		update_flag(Flag::Overflow, Mode::Clear);
 	}
 
 	this->register_a = result;
