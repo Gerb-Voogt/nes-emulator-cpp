@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/gerben/uni/dev/nes-emulator-cpp/build",
+  "command": "/usr/bin/c++  -I/home/gerben/uni/dev/nes-emulator-cpp/include -std=gnu++17 -o CMakeFiles/nes-emu.dir/src/main.cpp.o -c /home/gerben/uni/dev/nes-emulator-cpp/src/main.cpp",
+  "file": "/home/gerben/uni/dev/nes-emulator-cpp/src/main.cpp"
+},
+{
+  "directory": "/home/gerben/uni/dev/nes-emulator-cpp/build",
+  "command": "/usr/bin/c++  -I/home/gerben/uni/dev/nes-emulator-cpp/include -std=gnu++17 -o CMakeFiles/nes-emu.dir/src/mos6502.cpp.o -c /home/gerben/uni/dev/nes-emulator-cpp/src/mos6502.cpp",
+  "file": "/home/gerben/uni/dev/nes-emulator-cpp/src/mos6502.cpp"
+},
+{
+  "directory": "/home/gerben/uni/dev/nes-emulator-cpp/build",
+  "command": "/usr/bin/c++  -I/home/gerben/uni/dev/nes-emulator-cpp/include -std=gnu++17 -o CMakeFiles/nes-emu.dir/src/opcode.cpp.o -c /home/gerben/uni/dev/nes-emulator-cpp/src/opcode.cpp",
+  "file": "/home/gerben/uni/dev/nes-emulator-cpp/src/opcode.cpp"
+}
+]
