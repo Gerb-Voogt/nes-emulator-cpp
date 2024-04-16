@@ -1,8 +1,9 @@
 PROGRAM=main
 CC=gcc
 CXX=g++
-CFLAGS=-Wall -g
-LIBS=-lncurses
+CFLAGS=-Wall -g -std=c++17
+LDFLAGS=-lncurses
+
 
 OUTPUT_FOLDER=build
 
@@ -15,11 +16,11 @@ default: ${PROGRAM}
 
 ${PROGRAM}:
 	mkdir -p ${OUTPUT_FOLDER}
-	${CXX} ${CFLAGS} -o ${OUTPUT_FOLDER}/$@ ${SRC} ${LIBS}
+	${CXX} ${CFLAGS} -o ${OUTPUT_FOLDER}/$@ ${SRC} ${LDFLAGS}
 
 cpu-test: ${SRC}
 	mkdir -p ${OUTPUT_FOLDER}
-	${verbose}${CXX} -DTEST ${CFLAGS} -g -o ${OUTPUT_FOLDER}/$@ ${SRC} ${TST} ${LIBS}
+	${verbose}${CXX} -DTEST ${CFLAGS} -g -o ${OUTPUT_FOLDER}/$@ ${SRC} ${TST} ${LDFLAGS}
 
 test-all: ${SRC}
 	mkdir -p ${OUTPUT_FOLDER}
