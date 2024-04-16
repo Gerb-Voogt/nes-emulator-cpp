@@ -2,7 +2,5 @@ build/
 testing/
 assem/
 test-roms/
-docs/6502-reference.html
-docs/6502-reference.md
 docs/6502-reference.pdf
 .cache
