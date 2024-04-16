@@ -2,7 +2,6 @@
 #include <bitset>
 #include <cstdint>
 #include <vector>
-#include <map>
 #include <functional>
 
 /**
@@ -50,28 +49,34 @@ enum Mode {
  * Structure for storing Opcodes and their associated meta-data.
  */
 struct Opcode {
-    const uint16_t code;
-    const uint8_t size;
-    const uint8_t cycles;
-    const AddressingMode mode;
-    const std::string name;
+    short code;
+    short size;
+    short cycles;
+    AddressingMode mode;
+    std::string name;
+
+    /**
+     * Default Constructor
+     * ---
+     */
+    Opcode();
 
     /**
      * Constructor, create an opcode with associated code, size, addressingmode, cycle count and name
      * ---
-     * @param `const uint16_t code` the number (typically hex) associated with the opcode
-     * @param `const uint8_t size` the amount of bytes the opcode uses. This will be used to appropriately increase the program counter
-     * @param `const uint8_t cycles` the amount of cycles that the opcode uses to execute
+     * @param `const short code` the number (typically hex) associated with the opcode
+     * @param `const short size` the amount of bytes the opcode uses. This will be used to appropriately increase the program counter
+     * @param `const short cycles` the amount of cycles that the opcode uses to execute
      * @param `const AddresssingMode mode` the addressingmode associated with the opcode
      * @param `const std::string name` the mnemonic of the opcode
+     * ---
      */
-    Opcode(const uint16_t code, const uint8_t size, const uint8_t cycles, const AddressingMode mode, const std::string name);
+    Opcode(short code,
+           short size,
+           short cycles,
+           AddressingMode mode,
+           std::string name);
 };
-
-/**
- * Global hashmap of all the available Opcodes and their data
- */
-extern std::map<uint16_t, Opcode> OPCODES;
 
 
 /**
@@ -117,6 +122,10 @@ public:
     uint8_t register_iry;
     uint8_t status;
     uint32_t cycles;
+
+    // These should be private
+    uint16_t fetched_data;
+    uint16_t cycle_duration;
 
     // This might give a warning for some compilers as a large amount of data 
     // is allocated on the stack. First 256 bytes (0x0100) reserved as the zero page
@@ -269,6 +278,9 @@ public:
      * ---
      */
     void run();
+
+
+    void wait_cycle_count(uint8_t cycles);
 
     /**
      * Run the CPU with a callback such that user input can be parsed. Executes whatever program is loaded into memory space `0x8000` - `0xFFFF`
@@ -780,6 +792,15 @@ public:
      * ---
      */
     void hex_dump_rom();
+
+    /**
+    * Function for debugging and printing purposes. Does a formatted print fo the opcode
+    * and it's operand.
+    * ---
+    * @param `const Opcode opc`, the 1 byte value to be printed as a binary string
+    * ---
+    */
+    void log_instruction(const uint16_t pc, const Opcode opc) const;
 };
 
 /**
